@@ -8,10 +8,14 @@
 #include <unordered_map>
 #include <any>
 
+#include "dependencies/SimpleINI/SimpleIni.h"
+
 #include "RE/Skyrim.h" // Dependency : vcpkg integration
 #include "SKSE/SKSE.h" // Dependency : vcpkg integration
 
 #include "include/yggdrasil.h"
+
+#include "include/configuration.h"
 #include "include/log.h"
 
 #include <spdlog/sinks/basic_file_sink.h>

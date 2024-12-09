@@ -37,13 +37,17 @@ namespace YGGDRASIL {
 
         if(manager == Manager::Configuration) {
 
+            ConfigurationManager& ConfigurationManagerInstance = ConfigurationManager::GetSingleton();
 
+            if(ConfigurationManagerInstance.Init()) {
+
+            };
 
         };
 
         if(manager == Manager::Log) {
 
-            LogManager LogManagerInstance = LogManager::GetSingleton();
+            LogManager& LogManagerInstance = LogManager::GetSingleton();
 
             if(LogManagerInstance.Init()) {
 
