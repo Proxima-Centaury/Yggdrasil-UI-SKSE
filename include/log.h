@@ -25,16 +25,12 @@ class LogManager {
 
         bool Init();
 
-        void SendCritical(const char message);
-        void SendDebug(const char message);
-        void SendError(const char message);
-        void SendInformation(const char message);
-        void SendTrace(const char message);
-        void SendWarning(const char message);
+        static void Log(LogLevel level, const std::string& message, bool shouldBreakLine);
+        static void BreakLine();
+        static void SetLogLevel();
 
     private :
 
         bool CreateLogFile();
-        bool SetLogLevel(LogLevel level);
 
 };

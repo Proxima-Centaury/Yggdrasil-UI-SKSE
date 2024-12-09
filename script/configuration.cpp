@@ -1,19 +1,17 @@
 #include "../include/yggdrasil.h"
 
-/* ------------------------------------------------------------------------------------------------------------------------------------------ */
+/* --------------------------------------------------------------------------------------------------------------------------------- */
 /* CREATES CONFIGURATION FILE */
-/* ------------------------------------------------------------------------------------------------------------------------------------------ */
+/* --------------------------------------------------------------------------------------------------------------------------------- */
 bool ConfigurationManager::CreateConfigurationFile(std::string pathToConfigurationFile) {
 
     ResetConfigurationFile();
 
     SI_Error configurationCreationState = configuration.SaveFile(pathToConfigurationFile.c_str());
 
-    if(configurationCreationState < 0) {
+    if(configurationCreationState < 0) return false;
 
-        return false;
-
-    };
+    YGGDRASIL::SetGlobal(YGGDRASIL::Global::PathToConfigurationFile, pathToConfigurationFile);
 
     return true;
 
@@ -35,7 +33,9 @@ bool ConfigurationManager::Init() {
 
     if(configurationLoadingState < 0) return CreateConfigurationFile(pathToConfigurationFile);
 
-    return false;
+    YGGDRASIL::SetGlobal(YGGDRASIL::Global::PathToConfigurationFile, pathToConfigurationFile);
+
+    return true;
 
 };
 
