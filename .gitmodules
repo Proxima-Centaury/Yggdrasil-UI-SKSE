@@ -1,0 +1,3 @@
+[submodule "SimpleINI"]
+	path = dependencies/SimpleINI
+	url = https://github.com/brofield/simpleini.git
