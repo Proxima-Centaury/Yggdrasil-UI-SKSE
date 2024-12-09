@@ -54,10 +54,10 @@ namespace YGGDRASIL {
 
     };
 
-    void Init(Manager manager);
     void OnSKSEMessage(SKSE::MessagingInterface::Message* message);
 
     bool FindPlatform(const char* platform);
+    bool Init(Manager manager);
     bool IsMenuHandled(const const char& menuName);
 
 };

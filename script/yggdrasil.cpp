@@ -24,7 +24,7 @@ namespace YGGDRASIL {
     /* --------------------------------------------------------------------------------------------------------------------------------- */
     /* TRIGGERS MANAGERS INITIALIZATION */
     /* --------------------------------------------------------------------------------------------------------------------------------- */
-    void Init(Manager manager) {
+    bool Init(Manager manager) {
 
         SetGlobal(Global::PathToSKSEPlugins, "Data\\SKSE\\Plugins");
         SetGlobal(Global::PluginName, "Yggdrasil UI");
@@ -39,9 +39,7 @@ namespace YGGDRASIL {
 
             ConfigurationManager& ConfigurationManagerInstance = ConfigurationManager::GetSingleton();
 
-            if(ConfigurationManagerInstance.Init()) {
-
-            };
+            return ConfigurationManagerInstance.Init();
 
         };
 
@@ -49,17 +47,97 @@ namespace YGGDRASIL {
 
             LogManager& LogManagerInstance = LogManager::GetSingleton();
 
-            if(LogManagerInstance.Init()) {
+            return LogManagerInstance.Init();
 
+        };
+
+        return false;
+
+    };
+
+    /* --------------------------------------------------------------------------------------------------------------------------------- */
+    /* CHECKS IF SPECIFIC MENU IS HANDLED BY YGGDRASIL UI */
+    /* --------------------------------------------------------------------------------------------------------------------------------- */
+    bool YGGDRASIL::IsMenuHandled(const char& menuName) {
+
+        // LogManager::Log(LogManager::LogType::Debug, std::format("Is \"{}\" handled : {}.", menuName, std::find(menus.begin(), menus.end(), menuName) != menus.end()));
+        // LogManager::Log(LogManager::LogType::Debug, "/!\\ LINE BREAK /!\\\n");
+
+        // return std::find(menus.begin(), menus.end(), menuName) != menus.end();
+        return false;
+
+    };
+
+    /* --------------------------------------------------------------------------------------------------------------------------------- */
+    /* LISTENS FOR SKSE MESSAGES */
+    /* --------------------------------------------------------------------------------------------------------------------------------- */
+    void YGGDRASIL::OnSKSEMessage(SKSE::MessagingInterface::Message* message) {
+
+        std::string feedback;
+
+        auto data = message->data;
+        auto sender = message->sender;
+        auto type = message->type;
+
+        switch (type) {
+            case SKSE::MessagingInterface::kPostLoad: {
+                feedback = "All SKSE plugins are successfully loaded";
+                break;
             };
 
+            case SKSE::MessagingInterface::kPostPostLoad: {
+                feedback = "??? - Message unclear ( PostPostLoad )";
+                break;
+            };
+
+            case SKSE::MessagingInterface::kPreLoadGame: {
+                feedback = "A save is being loaded";
+                break;
+            };
+
+            case SKSE::MessagingInterface::kPostLoadGame: {
+                feedback = "A save has been loaded";
+                break;
+            };
+
+            case SKSE::MessagingInterface::kSaveGame: {
+                feedback = "The game is being saved";
+                break;
+            };
+
+            case SKSE::MessagingInterface::kDeleteGame: {
+                feedback = "A save is being deleted";
+                break;
+            };
+
+            case SKSE::MessagingInterface::kInputLoaded: {
+                feedback = "All inputs are loaded";
+                break;
+            };
+
+            case SKSE::MessagingInterface::kNewGame: {
+                feedback = "A new game is starting";
+                break;
+            };
+
+            case SKSE::MessagingInterface::kDataLoaded: {
+                feedback = "Data is successfully loaded";
+                // auto UI = UIManager::GetSingleton();
+                // RE::UI::GetSingleton()->AddEventSink<RE::MenuOpenCloseEvent>(UI);
+                break;
+            };
+
+            case SKSE::MessagingInterface::kTotal: {
+                feedback = "??? - Message unclear ( Total )";
+                break;
+            };
         };
 
-        if(manager == Manager::UI) {
+        LogManager::Log(LogManager::LogLevel::Info, std::format("\"{}\" sending message type {}", sender, type), false);
+        LogManager::Log(LogManager::LogLevel::Info, std::format("Receiving data : {}", data), false);
+        LogManager::Log(LogManager::LogLevel::Info, std::format("Message : \"{}\"", feedback), true);
 
-
-
-        };
+        return;
 
     };
 

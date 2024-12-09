@@ -14,8 +14,6 @@ class ConfigurationManager {
 
         bool Init();
 
-        CSimpleIniA& GetConfiguration() { return configuration; };
-
     private :
 
         CSimpleIniA configuration;
