@@ -1,3 +1,5 @@
+#pragma once
+
 #include <algorithm>
 #include <windows.h>
 #include <shlobj.h>
