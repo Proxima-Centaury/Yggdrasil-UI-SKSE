@@ -35,8 +35,13 @@ find_package(CommonLibSSE CONFIG REQUIRED)
 add_commonlibsse_plugin(${PROJECT_NAME}
     SOURCES
         plugin.cpp
-        script/yggdrasil.cpp
+
+        script/configuration.cpp
         script/log.cpp
+        script/ui.cpp
+        script/yggdrasil.cpp
+
+        script/menu/shared.cpp
 )
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_23) # <--- use C++23 standard
 target_precompile_headers(${PROJECT_NAME} PRIVATE PCH.h) # <--- PCH.h is required!
