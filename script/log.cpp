@@ -149,7 +149,7 @@ void LogManager::SetLogLevel() {
 
     CSimpleIniA configuration = &ConfigurationManager::GetSingleton();
 
-    SI_Error configurationLoadingState = configuration.LoadFile(pathToConfigurationFile.c_str());
+    SI_Error configurationLoadState = configuration.LoadFile(pathToConfigurationFile.c_str());
 
     const char* defaultLogLevel = "Trace";
     const char* userLogLevelPreference = configuration.GetValue("DEBUG", "SetLogLevel", defaultLogLevel);

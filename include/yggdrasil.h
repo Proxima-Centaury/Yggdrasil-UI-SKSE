@@ -12,6 +12,7 @@ namespace YGGDRASIL {
         PathToMyDocuments,
         PathToSKSE,
         PathToSKSEPlugins,
+        PathToUISoundFX,
         PluginName,
         SkyrimGOG,
         SkyrimSteam
@@ -58,6 +59,6 @@ namespace YGGDRASIL {
 
     bool FindPlatform(const char* platform);
     bool Init(Manager manager);
-    bool IsMenuHandled(const const char& menuName);
+    bool IsMenuHandled(std::string menuName);
 
 };
