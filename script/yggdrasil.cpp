@@ -27,7 +27,7 @@ namespace YGGDRASIL {
     bool Init(Manager manager) {
 
         SetGlobal(Global::PathToSKSEPlugins, "Data\\SKSE\\Plugins");
-        SetGlobal(Global::PathToUISoundFX, "Sound\\FX\\UI");
+        SetGlobal(Global::PathToUISoundFX, "Data\\Interface\\Yggdrasil UI\\SFX");
         SetGlobal(Global::PluginName, "Yggdrasil UI");
         SetGlobal(Global::SkyrimGOG, "Skyrim Special Edition GOG");
         SetGlobal(Global::SkyrimSteam, "Skyrim Special Edition");

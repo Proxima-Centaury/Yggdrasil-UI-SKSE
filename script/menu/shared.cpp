@@ -10,22 +10,13 @@ void SharedMenuManager::UIPlaySound(const RE::FxDelegateArgs& args) {
     SKSELog(args);
 
     std::string pathToUISoundFX = YGGDRASIL::GetGlobal<const char*>(YGGDRASIL::Global::PathToUISoundFX);
+    std::string pathToUISoundFXFile = std::format("{}\\{}.wav", pathToUISoundFX, args[0].GetString());
 
-    // auto* soundSystem = RE::BSAudioManager::GetSingleton();
+    static SFXManager sfxManager;
 
-    // if(!soundSystem) {
+    sfxManager.AsyncPlaySound(pathToUISoundFXFile);
 
-    //     LogManager::Log(LogManager::LogLevel::Error, "\"BSAudioManager\" not found", false);
-    //     LogManager::Log(LogManager::LogLevel::Error, "Message : \"UI won't be able to trigger UIPlaySound\" SFX", true);
-
-    //     return;
-
-    // }
-
-    // std::string soundPath = std::format("{}\\{}", pathToUISoundFX, args[0].GetString());
-    // RE::BGSSoundDescriptorForm* soundDescriptor = RE::TESForm::LookupByEditorID<RE::BGSSoundDescriptorForm>(soundPath);
-
-    // soundSystem->Play(soundDescriptor);
+    LogManager::Log(LogManager::LogLevel::Info, std::format("Played SFX : \"{}\"", pathToUISoundFX), true);
 
 }
 

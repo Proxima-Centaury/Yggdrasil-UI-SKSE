@@ -18,7 +18,6 @@ class SharedMenuManager : public RE::FxDelegateHandler {
 
         };
 
-
         // static void EndState(const RE::FxDelegateArgs& params);
         // static void StartState(const RE::FxDelegateArgs& params);
         static void UIPlaySound(const RE::FxDelegateArgs& args);
