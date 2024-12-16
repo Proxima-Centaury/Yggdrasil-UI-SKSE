@@ -1,6 +1,8 @@
 #include "PCH.h"
 
-SKSEPluginLoad(const SKSE::LoadInterface* skse) {
+#define DLLEXPORT __declspec(dllexport)
+
+extern "C" DLLEXPORT bool SKSEPlugin_Load(const SKSE::LoadInterface* skse) {
 
     SKSE::Init(skse);
 

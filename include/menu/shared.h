@@ -14,6 +14,7 @@ class SharedMenuManager : public RE::FxDelegateHandler {
 
             processor->Process("SKSEGetConfiguration", SharedMenuManager::SKSEGetConfiguration);
             processor->Process("SKSELog", SharedMenuManager::SKSELog);
+            processor->Process("SKSEQuitGame", SharedMenuManager::SKSEQuitGame);
 
         };
 
@@ -22,8 +23,8 @@ class SharedMenuManager : public RE::FxDelegateHandler {
         static void UIStartState(const RE::FxDelegateArgs& args);
 
         static void SKSEGetConfiguration(const RE::FxDelegateArgs& args);
-        static void SKSELog(const RE::FxDelegateArgs& params);
+        static void SKSELog(const RE::FxDelegateArgs& args);
         static void SKSELogProcessArgument(const RE::GFxValue& arg, std::uint32_t index, std::uint32_t depth);
-
+        static void SKSEQuitGame(const RE::FxDelegateArgs& args);
 
 };

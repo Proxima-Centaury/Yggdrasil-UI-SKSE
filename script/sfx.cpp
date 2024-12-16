@@ -39,6 +39,8 @@ SFXManager::~SFXManager() { CleanUp(); };
 /* --------------------------------------------------------------------------------------------------------------------------------- */
 void SFXManager::CleanUp() {
 
+    LogManager::Log(LogManager::LogLevel::Debug, "Executing \"SFXManager\" cleanup", true);
+
     {
         std::lock_guard<std::mutex> lock(queueMutex);
         terminate = true;

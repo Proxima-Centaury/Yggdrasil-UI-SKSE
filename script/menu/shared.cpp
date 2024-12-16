@@ -197,3 +197,35 @@ void SharedMenuManager::SKSELogProcessArgument(const RE::GFxValue& arg, std::uin
     };
 
 };
+
+/* --------------------------------------------------------------------------------------------------------------------------------- */
+/* QUITS GAME */
+/* --------------------------------------------------------------------------------------------------------------------------------- */
+void SharedMenuManager::SKSEQuitGame(const RE::FxDelegateArgs& args) {
+
+    LogManager::Log(LogManager::LogLevel::Debug, "Executing \"SKSEQuitGame\" from UI GameDelegate call", true);
+
+    SKSELog(args);
+
+    SFXManager::GetSingleton().CleanUp();
+
+    HWND hwnd = FindWindow(nullptr, L"Skyrim Special Edition");
+
+    DWORD processID;
+
+    if(hwnd) {
+
+        GetWindowThreadProcessId(hwnd, &processID);
+
+        HANDLE hProcess = OpenProcess(PROCESS_TERMINATE, FALSE, processID);
+
+        if(hProcess) {
+
+            TerminateProcess(hProcess, 0);
+            CloseHandle(hProcess);
+
+        };
+
+    };
+
+};
