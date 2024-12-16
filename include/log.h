@@ -7,7 +7,6 @@ class LogManager {
         static LogManager& GetSingleton() {
 
             static LogManager instance;
-
             return instance;
 
         };

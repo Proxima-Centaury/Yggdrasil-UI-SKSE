@@ -4,36 +4,36 @@ class SFXManager {
 
     public :
 
-        SFXManager();
-        ~SFXManager();
+        static SFXManager& GetSingleton() {
 
-        void AsyncPlaySound(const std::string& filePath) {
-
-            if(!initialized) {
-
-                LogManager::Log(LogManager::LogLevel::Error, "\"SFXManager\" not initialized", true);
-
-                return;
-
-            };
-
-            std::thread([this, filePath]() {
-
-                PlaySound(filePath);
-
-            }).detach();
+            static SFXManager instance;
+            return instance;
 
         };
 
+        void QueueSFX(const std::string& filePath);
+        void CleanUp();
+
+        ~SFXManager();
+
     private :
+
+        SFXManager();
 
         ALCdevice* device;
         ALCcontext* context;
 
-        bool initialized = false;
+        std::condition_variable condition;
+        std::queue<std::string> queue;
+        std::mutex queueMutex;
+        std::vector<std::thread> workers;
 
-        bool LoadSound(const std::string& filePath, ALuint& buffer);
+        bool terminate;
 
         void PlaySound(const std::string& filePath);
+        void WorkerThread();
+
+        SFXManager(const SFXManager&) = delete;
+        SFXManager& operator=(const SFXManager&) = delete;
 
 };

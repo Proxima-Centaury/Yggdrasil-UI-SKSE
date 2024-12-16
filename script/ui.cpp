@@ -12,13 +12,9 @@ RE::BSEventNotifyControl UIManager::ProcessEvent(const RE::MenuOpenCloseEvent* e
 
     if(event->opening) {
 
-        LogManager::Log(LogManager::LogLevel::Debug, std::format("\"{}\" is opening", menuName), false);
-
         if(YGGDRASIL::IsMenuHandled(menuName)) RegisterFxDelegateCallbacks(menuName);
 
     } else {
-
-        LogManager::Log(LogManager::LogLevel::Debug, std::format("\"{}\" is closing", menuName), false);
 
         if(YGGDRASIL::IsMenuHandled(menuName)) UnregisterFxDelegateCallbacks(menuName);
 
@@ -39,7 +35,6 @@ bool UIManager::RegisterFxDelegateCallbacks(std::string menuName) {
     GameDelegate = new RE::FxDelegate();
 
     SharedMenuManager sharedMenuManager;
-    // StartMenuManager startMenuManager;
 
     if(movieClip) {
 
@@ -53,15 +48,12 @@ bool UIManager::RegisterFxDelegateCallbacks(std::string menuName) {
 
         GameDelegate->RegisterHandler(&sharedMenuManager);
         
-        // if(menuName == "Main Menu") GameDelegate->RegisterHandler(&startMenuManager);
-
         bool areCallbacksRegistered = !GameDelegate->callbacks.IsEmpty();
 
         if(menuName == "Main Menu" && areCallbacksRegistered) {
 
             LogManager::Log(LogManager::LogLevel::Info, std::format("Is \"GameDelegate\" callback list for \"{}\" empty : {}", menuName, !areCallbacksRegistered), false);
             LogManager::Log(LogManager::LogLevel::Info, std::format("\"{}\" callbacks registered", menuName), true);
-
             return true;
 
         } else {
@@ -69,7 +61,6 @@ bool UIManager::RegisterFxDelegateCallbacks(std::string menuName) {
             LogManager::Log(LogManager::LogLevel::Warn, std::format("Failed to register callbacks for \"{}\"", menuName), false);
             LogManager::Log(LogManager::LogLevel::Warn, std::format("May be due to : \"Possibly no callbacks to register\"", menuName), false);
             LogManager::Log(LogManager::LogLevel::Warn, std::format("May be due to : \"Menu callbacks registration possibly faced unhandled issue\"", menuName), true);
-
             return false;
 
         };
@@ -77,7 +68,6 @@ bool UIManager::RegisterFxDelegateCallbacks(std::string menuName) {
     } else {
 
         LogManager::Log(LogManager::LogLevel::Warn, std::format("No MovieClip found in \"{}\"", menuName), true);
-
         return false;
 
     };
@@ -90,18 +80,14 @@ bool UIManager::RegisterFxDelegateCallbacks(std::string menuName) {
 bool UIManager::UnregisterFxDelegateCallbacks(std::string menuName) {
 
     SharedMenuManager sharedMenuManager;
-    // StartMenuManager startMenuManager;
 
     GameDelegate->UnregisterHandler(&sharedMenuManager);
-
-    // if(menuName == "Main Menu") GameDelegate->UnregisterHandler(&startMenuManager);
 
     bool areCallbacksUnregistered = GameDelegate->callbacks.IsEmpty();
 
     if(areCallbacksUnregistered) {
 
         LogManager::Log(LogManager::LogLevel::Info, std::format("{} callbacks unregistered", menuName), true);
-
         return true;
 
     } else {
@@ -109,7 +95,6 @@ bool UIManager::UnregisterFxDelegateCallbacks(std::string menuName) {
         LogManager::Log(LogManager::LogLevel::Warn, std::format("Failed to unregister callbacks for {}", menuName), false);
         LogManager::Log(LogManager::LogLevel::Warn, std::format("May be due to : \"Possibly no callbacks to unregister\"", menuName), false);
         LogManager::Log(LogManager::LogLevel::Warn, std::format("May be due to : \"Menu callbacks registration possibly faced unhandled issue\"", menuName), true);
-
         return false;
 
     };

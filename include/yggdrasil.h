@@ -6,6 +6,7 @@ namespace YGGDRASIL {
 
         Menus,
         MenuState,
+        PathToBackgrounds,
         PathToConfigurationFile,
         PathToLogFile,
         PathToMyGames,

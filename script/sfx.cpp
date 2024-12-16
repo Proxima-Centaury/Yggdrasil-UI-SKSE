@@ -3,14 +3,13 @@
 /* --------------------------------------------------------------------------------------------------------------------------------- */
 /* INITIALIZES OPENAL FOR SFX */
 /* --------------------------------------------------------------------------------------------------------------------------------- */
-SFXManager::SFXManager() {
+SFXManager::SFXManager() : device(nullptr), context(nullptr), terminate(false) {
 
     device = alcOpenDevice(nullptr);
 
     if(!device) {
 
         LogManager::Log(LogManager::LogLevel::Error, "Failed to open \"OpenAL\" device", true);
-
         return;
 
     };
@@ -20,81 +19,43 @@ SFXManager::SFXManager() {
     if(!context || !alcMakeContextCurrent(context)) {
 
         LogManager::Log(LogManager::LogLevel::Error, "Failed to set \"OpenAL\" context", true);
-
+        if (context) alcDestroyContext(context);
         alcCloseDevice(device);
-
         return;
 
     };
 
-    initialized = true;
+    for(int i = 0; i < std::thread::hardware_concurrency(); ++i) { workers.emplace_back([this]() { WorkerThread(); }); };
 
-}
+};
 
 /* --------------------------------------------------------------------------------------------------------------------------------- */
 /* CLEARS OPENAL RELATED DATA ON SFXMANAGER DESTRUCTION */
 /* --------------------------------------------------------------------------------------------------------------------------------- */
-SFXManager::~SFXManager() {
-
-    if(context) alcDestroyContext(context);
-    if(device) alcCloseDevice(device);
-
-}
+SFXManager::~SFXManager() { CleanUp(); };
 
 /* --------------------------------------------------------------------------------------------------------------------------------- */
-/* LOADS SFX FILE IN BUFFER */
+/* CLEANS UP OPENAL DATA */
 /* --------------------------------------------------------------------------------------------------------------------------------- */
-bool SFXManager::LoadSound(const std::string& filePath, ALuint& buffer) {
+void SFXManager::CleanUp() {
 
-    std::ifstream file(filePath, std::ios::binary);
+    {
+        std::lock_guard<std::mutex> lock(queueMutex);
+        terminate = true;
+    }
 
-    if(!file)  {
+    condition.notify_all();
 
-        LogManager::Log(LogManager::LogLevel::Error, std::format("Failed to open \"SFX\" file : \"{}\"", filePath), true);
+    for(std::thread& thread : workers) { if(thread.joinable()) thread.join(); };
 
-        return false;
+    if(context) {
+
+        alcMakeContextCurrent(nullptr);
+        alcDestroyContext(context);
 
     };
 
-    char chunkId[4];
-    file.read(chunkId, 4);
-
-    if(std::string(chunkId, 4) != "RIFF") {
-
-        LogManager::Log(LogManager::LogLevel::Error, std::format("Invalid \"SFX\" file format : \"{}\"", filePath), true);
-
-        return false;
-
-    };
-
-    file.seekg(22); // Skip to channels
-    short channels;
-    file.read(reinterpret_cast<char*>(&channels), sizeof(short));
-
-    file.seekg(24); // Skip to sample rate
-    int sampleRate;
-    file.read(reinterpret_cast<char*>(&sampleRate), sizeof(int));
-
-    file.seekg(34); // Skip to bit depth
-    short bitDepth;
-    file.read(reinterpret_cast<char*>(&bitDepth), sizeof(short));
-
-    file.seekg(40); // Skip to data chunk size
-    int dataSize;
-    file.read(reinterpret_cast<char*>(&dataSize), sizeof(int));
-
-    std::vector<char> data(dataSize);
-    file.read(data.data(), dataSize);
-
-    ALenum format;
-
-    if(channels == 1) format = (bitDepth == 16) ? AL_FORMAT_MONO16 : AL_FORMAT_MONO8;
-    if(channels != 1) format = (bitDepth == 16) ? AL_FORMAT_STEREO16 : AL_FORMAT_STEREO8;
-
-    alGenBuffers(1, &buffer);
-    alBufferData(buffer, format, data.data(), dataSize, sampleRate);
-
-    return true;
+    if(device) { alcCloseDevice(device); };
 
 };
 
@@ -103,29 +64,112 @@ bool SFXManager::LoadSound(const std::string& filePath, ALuint& buffer) {
 /* --------------------------------------------------------------------------------------------------------------------------------- */
 void SFXManager::PlaySound(const std::string& filePath) {
 
-    ALuint buffer, source;
+    std::ifstream file(filePath, std::ios::binary);
 
-    alGenBuffers(1, &buffer);
-    alGenSources(1, &source);
+    if(!file) {
 
-    if(LoadSound(filePath, buffer)) {
+        LogManager::Log(LogManager::LogLevel::Error, std::format("Failed to open \"SFX\" file : \"{}\"", filePath), true);
+        return;
 
-        alSourcei(source, AL_BUFFER, buffer);
-        alSourcePlay(source);
+    };
 
-        ALint state;
+    char chunkId[4];
 
-        do { alGetSourcei(source, AL_SOURCE_STATE, &state); } while (state == AL_PLAYING);
+    file.read(chunkId, 4);
 
-        alDeleteSources(1, &source);
-        alDeleteBuffers(1, &buffer);
+    if(std::strncmp(chunkId, "RIFF", 4) != 0) {
+
+        LogManager::Log(LogManager::LogLevel::Error, std::format("Invalid \"SFX\" file format : \"{}\"", filePath), true);
+        return;
+
+    };
+
+    file.seekg(22);
+    short channels;
+    file.read(reinterpret_cast<char*>(&channels), sizeof(short));
+
+    file.seekg(24);
+    int sampleRate;
+    file.read(reinterpret_cast<char*>(&sampleRate), sizeof(int));
+
+    file.seekg(34);
+    short bitDepth;
+    file.read(reinterpret_cast<char*>(&bitDepth), sizeof(short));
+
+    file.seekg(40);
+    int dataSize;
+    file.read(reinterpret_cast<char*>(&dataSize), sizeof(int));
+
+    std::vector<char> data(dataSize);
+    file.read(data.data(), dataSize);
+
+    ALenum format = AL_FORMAT_MONO8;
+
+    if(channels == 1) {
+
+        format = (bitDepth == 16) ? AL_FORMAT_MONO16 : AL_FORMAT_MONO8;
 
     } else {
 
-        LogManager::Log(LogManager::LogLevel::Error, std::format("Failed to load \"SFX\" file : \"{}\"", filePath), true);
+        format = (bitDepth == 16) ? AL_FORMAT_STEREO16 : AL_FORMAT_STEREO8;
 
-        return;
-    
+    };
+
+    ALuint buffer, source;
+
+    alGenBuffers(1, &buffer);
+
+    alBufferData(buffer, format, data.data(), dataSize, sampleRate);
+
+    alGenSources(1, &source);
+
+    alSourcei(source, AL_BUFFER, buffer);
+    alSourcePlay(source);
+
+    ALint state;
+
+    do { alGetSourcei(source, AL_SOURCE_STATE, &state); } while (state == AL_PLAYING);
+
+    alDeleteSources(1, &source);
+    alDeleteBuffers(1, &buffer);
+
+};
+
+/* --------------------------------------------------------------------------------------------------------------------------------- */
+/* QUEUES SFX FILE */
+/* --------------------------------------------------------------------------------------------------------------------------------- */
+void SFXManager::QueueSFX(const std::string& filePath) {
+
+    {
+        std::lock_guard<std::mutex> lock(queueMutex);
+        queue.push(filePath);
+    }
+
+    condition.notify_one();
+
+};
+
+/* --------------------------------------------------------------------------------------------------------------------------------- */
+/* --- */
+/* --------------------------------------------------------------------------------------------------------------------------------- */
+void SFXManager::WorkerThread() {
+
+    while(true) {
+
+        std::string filePath;
+
+        {
+            std::unique_lock<std::mutex> lock(queueMutex);
+            condition.wait(lock, [this]() { return terminate || !queue.empty(); });
+
+            if(terminate && queue.empty()) return;
+
+            filePath = queue.front();
+            queue.pop();
+        }
+
+        if(!terminate) PlaySound(filePath);
+
     };
 
 };

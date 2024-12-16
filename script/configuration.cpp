@@ -1,10 +1,6 @@
 #include "../include/yggdrasil.h"
 
-std::string ConfigurationManager::BuildSectionKeyString(const char* section, const char* key) const {
-
-    return std::string(section) + "." + key;
-
-};
+std::string ConfigurationManager::BuildSectionKeyString(const char* section, const char* key) const { return std::string(section) + "." + key; };
 
 /* --------------------------------------------------------------------------------------------------------------------------------- */
 /* CREATES CONFIGURATION FILE */
@@ -18,7 +14,6 @@ bool ConfigurationManager::CreateConfigurationFile(std::string pathToConfigurati
     if(configurationCreationState < 0) return false;
 
     YGGDRASIL::SetGlobal(YGGDRASIL::Global::PathToConfigurationFile, pathToConfigurationFile);
-
     return true;
 
 };
@@ -42,7 +37,6 @@ ValueType ConfigurationManager::GetValue(const char* section, const char* key, V
         } catch(const std::bad_any_cast& e) {
 
             LogManager::Log(LogManager::LogLevel::Error, std::format("Type mismatch for \"{}\" key : \"{}\"", sectionKey, e.what()), true);
-
             throw;
 
         };
@@ -55,7 +49,6 @@ ValueType ConfigurationManager::GetValue(const char* section, const char* key, V
 
         LogManager::Log(LogManager::LogLevel::Warn, std::format("\"{}\" key not found in \"{}\" section", key, section), false);
         LogManager::Log(LogManager::LogLevel::Warn, std::format("Message : \"{}\"", "Returning default value"), true);
-
         return defaultValue;
 
     };
@@ -86,13 +79,11 @@ ValueType ConfigurationManager::GetValue(const char* section, const char* key, V
 
         LogManager::Log(LogManager::LogLevel::Error, std::format("Failed to convert value \"{}\" for \"{}\" key", rawValue, sectionKey), false);
         LogManager::Log(LogManager::LogLevel::Error, std::format("Message : \"{}\"", "Returning default value"), true);
-
         return defaultValue;
 
     };
 
     cachedValues[sectionKey] = convertedValue;
-
     return convertedValue;
 
 };
@@ -114,7 +105,6 @@ bool ConfigurationManager::Init() {
     if(configurationLoadState < 0) return CreateConfigurationFile(pathToConfigurationFile);
 
     YGGDRASIL::SetGlobal(YGGDRASIL::Global::PathToConfigurationFile, pathToConfigurationFile);
-
     return true;
 
 };
@@ -128,16 +118,15 @@ bool ConfigurationManager::ResetConfigurationFile() {
 
     configuration.SetBoolValue("STARTMENU", "EnableCustomBackground", true);
     configuration.SetBoolValue("STARTMENU", "EnableCustomBackgroundRandomizer", true);
-    configuration.SetBoolValue("STARTMENU", "EnableGameStartVideo", true);
-    configuration.SetBoolValue("STARTMENU", "EnablePressStart", true);
+    configuration.SetBoolValue("STARTMENU", "EnableCustomBackgroundVignette", true);
 
+    configuration.SetValue("STARTMENU", "SetMainMenuPosition", "Left");
     configuration.SetValue("STARTMENU", "SetMenuFont", "$StartMenuFont");
     configuration.SetValue("STARTMENU", "SetTextFont", "$StartMenuFont");
     configuration.SetValue("STARTMENU", "SetTitleFont", "$StartMenuFont");
     configuration.SetValue("STARTMENU", "SetMenuFontColor", "#FFFFFF");
     configuration.SetValue("STARTMENU", "SetTextFontColor", "#FFFFFF");
     configuration.SetValue("STARTMENU", "SetTitleFontColor", "#FFFFFF");
-
     return true;
 
 };
