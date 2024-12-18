@@ -9,6 +9,16 @@ extern "C" DLLEXPORT bool SKSEPlugin_Load(const SKSE::LoadInterface* skse) {
     bool isConfigurationInitialized = YGGDRASIL::Init(YGGDRASIL::Manager::Configuration);
     bool isLogInitialized = YGGDRASIL::Init(YGGDRASIL::Manager::Log);
 
+    auto extenderVersion = skse->SKSEVersion();
+    auto runtimeVersion = skse->RuntimeVersion();
+    
+    std::string gameVersion = std::format("{}.{}.{}", runtimeVersion.major(), runtimeVersion.minor(), runtimeVersion.patch());
+    std::string uiVersion = "1.0.0";
+
+    YGGDRASIL::SetGlobal(YGGDRASIL::Global::GAMEVersion, gameVersion);
+    YGGDRASIL::SetGlobal(YGGDRASIL::Global::SKSEVersion, extenderVersion);
+    YGGDRASIL::SetGlobal(YGGDRASIL::Global::YGUIVersion, uiVersion);
+
     if(isConfigurationInitialized && isLogInitialized) {
 
         LogManager::SetLogLevel();

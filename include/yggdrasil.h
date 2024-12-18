@@ -4,6 +4,7 @@ namespace YGGDRASIL {
 
     enum class Global {
 
+        GAMEVersion,
         Menus,
         MenuState,
         PathToBackgrounds,
@@ -15,8 +16,10 @@ namespace YGGDRASIL {
         PathToSKSEPlugins,
         PathToUISoundFX,
         PluginName,
+        SKSEVersion,
         SkyrimGOG,
-        SkyrimSteam
+        SkyrimSteam,
+        YGUIVersion
 
     };
 

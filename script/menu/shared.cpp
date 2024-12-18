@@ -1,43 +1,20 @@
 #include "../include/yggdrasil.h"
 
 /* --------------------------------------------------------------------------------------------------------------------------------- */
-/* HANDLES ACTIONS THAT NEED TO BE TRIGGERED ON UI STATE END */
+/* DEFINES ENVIRONMENT */
 /* --------------------------------------------------------------------------------------------------------------------------------- */
-void SharedMenuManager::UIEndState(const RE::FxDelegateArgs& args) {
+void SharedMenuManager::SKSEDefineEnvironment(const RE::FxDelegateArgs& args) {
 
-    LogManager::Log(LogManager::LogLevel::Debug, "Executing \"UIEndState\" from UI GameDelegate call", true);
+    LogManager::Log(LogManager::LogLevel::Debug, "Executing \"SKSEDefineEnvironment\" from UI GameDelegate call", true);
 
     SKSELog(args);
 
-};
+    auto movieClip = args.GetMovie();
 
+    RE::GFxValue response;
+    movieClip->CreateObject(&response);
 
-/* --------------------------------------------------------------------------------------------------------------------------------- */
-/* PLAYS UI SOUND FX */
-/* --------------------------------------------------------------------------------------------------------------------------------- */
-void SharedMenuManager::UIPlaySound(const RE::FxDelegateArgs& args) {
-
-    LogManager::Log(LogManager::LogLevel::Debug, "Executing \"UIPlaySound\" from UI GameDelegate call", true);
-
-    SKSELog(args);
-
-    std::string pathToUISoundFX = YGGDRASIL::GetGlobal<const char*>(YGGDRASIL::Global::PathToUISoundFX);
-    std::string pathToUISoundFXFile = std::format("{}\\{}.wav", pathToUISoundFX, args[0].GetString());
-
-    SFXManager::GetSingleton().QueueSFX(pathToUISoundFXFile);
-
-    LogManager::Log(LogManager::LogLevel::Info, std::format("Played SFX : \"{}\"", pathToUISoundFXFile), true);
-
-};
-
-/* --------------------------------------------------------------------------------------------------------------------------------- */
-/* HANDLES ACTIONS THAT NEED TO BE TRIGGERED ON UI STATE START */
-/* --------------------------------------------------------------------------------------------------------------------------------- */
-void SharedMenuManager::UIStartState(const RE::FxDelegateArgs& args) {
-
-    LogManager::Log(LogManager::LogLevel::Debug, "Executing \"UIStartState\" from UI GameDelegate call", true);
-
-    SKSELog(args);
+    movieClip->SetVariable("environment", "Skyrim SKSE");
 
 };
 
@@ -69,10 +46,10 @@ void SharedMenuManager::SKSEGetConfiguration(const RE::FxDelegateArgs& args) {
 
         if(keyValues != nullptr) {
 
-            RE::GFxValue sectionObject;
-            movieClip->CreateObject(&sectionObject);
+            // RE::GFxValue sectionObject;
+            // movieClip->CreateObject(&sectionObject);
 
-            response.SetMember(sectionName, sectionObject);
+            // response.SetMember(sectionName, sectionObject);
 
             for(auto iterator = keyValues->begin(); iterator != keyValues->end(); ++iterator) {
 
@@ -104,7 +81,7 @@ void SharedMenuManager::SKSEGetConfiguration(const RE::FxDelegateArgs& args) {
 
                 };
 
-                sectionObject.SetMember(key.GetString(), value);
+                response.SetMember(key.GetString(), value);
 
             };
 
@@ -209,23 +186,70 @@ void SharedMenuManager::SKSEQuitGame(const RE::FxDelegateArgs& args) {
 
     SFXManager::GetSingleton().CleanUp();
 
-    HWND hwnd = FindWindow(nullptr, L"Skyrim Special Edition");
+    auto main = RE::Main::GetSingleton();
 
-    DWORD processID;
+    if(main) main->quitGame = true;
 
-    if(hwnd) {
+};
 
-        GetWindowThreadProcessId(hwnd, &processID);
+/* --------------------------------------------------------------------------------------------------------------------------------- */
+/* RETURNS GAME, SKSE AND YGUI VERSIONS */
+/* --------------------------------------------------------------------------------------------------------------------------------- */
+void SharedMenuManager::SKSEGetVersions(const RE::FxDelegateArgs& args) {
 
-        HANDLE hProcess = OpenProcess(PROCESS_TERMINATE, FALSE, processID);
+    LogManager::Log(LogManager::LogLevel::Debug, "Executing \"SKSEGetVersions\" from UI GameDelegate call", true);
 
-        if(hProcess) {
+    SKSELog(args);
 
-            TerminateProcess(hProcess, 0);
-            CloseHandle(hProcess);
+    auto movieClip = args.GetMovie();
 
-        };
+    RE::GFxValue response;
+    movieClip->CreateObject(&response);
 
-    };
+    response.SetMember("GAME", RE::GFxValue(YGGDRASIL::GetGlobal<std::string>(YGGDRASIL::Global::GAMEVersion)));
+    // response.SetMember("SKSE", RE::GFxValue(YGGDRASIL::GetGlobal<std::string>(YGGDRASIL::Global::SKSEVersion)));
+    response.SetMember("YGUI", RE::GFxValue(YGGDRASIL::GetGlobal<std::string>(YGGDRASIL::Global::YGUIVersion)));
+
+    movieClip->SetVariable("versions", response);
+
+};
+
+/* --------------------------------------------------------------------------------------------------------------------------------- */
+/* HANDLES ACTIONS THAT NEED TO BE TRIGGERED ON UI STATE END */
+/* --------------------------------------------------------------------------------------------------------------------------------- */
+void SharedMenuManager::UIEndState(const RE::FxDelegateArgs& args) {
+
+    LogManager::Log(LogManager::LogLevel::Debug, "Executing \"UIEndState\" from UI GameDelegate call", true);
+
+    SKSELog(args);
+
+};
+
+/* --------------------------------------------------------------------------------------------------------------------------------- */
+/* PLAYS UI SOUND FX */
+/* --------------------------------------------------------------------------------------------------------------------------------- */
+void SharedMenuManager::UIPlaySound(const RE::FxDelegateArgs& args) {
+
+    LogManager::Log(LogManager::LogLevel::Debug, "Executing \"UIPlaySound\" from UI GameDelegate call", true);
+
+    SKSELog(args);
+
+    std::string pathToUISoundFX = YGGDRASIL::GetGlobal<const char*>(YGGDRASIL::Global::PathToUISoundFX);
+    std::string pathToUISoundFXFile = std::format("{}\\{}.wav", pathToUISoundFX, args[0].GetString());
+
+    SFXManager::GetSingleton().QueueSFX(pathToUISoundFXFile);
+
+    LogManager::Log(LogManager::LogLevel::Info, std::format("Played SFX : \"{}\"", pathToUISoundFXFile), true);
+
+};
+
+/* --------------------------------------------------------------------------------------------------------------------------------- */
+/* HANDLES ACTIONS THAT NEED TO BE TRIGGERED ON UI STATE START */
+/* --------------------------------------------------------------------------------------------------------------------------------- */
+void SharedMenuManager::UIStartState(const RE::FxDelegateArgs& args) {
+
+    LogManager::Log(LogManager::LogLevel::Debug, "Executing \"UIStartState\" from UI GameDelegate call", true);
+
+    SKSELog(args);
 
 };
