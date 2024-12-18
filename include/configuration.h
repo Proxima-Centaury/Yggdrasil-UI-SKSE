@@ -7,7 +7,6 @@ class ConfigurationManager {
         static ConfigurationManager& GetSingleton() {
 
             static ConfigurationManager instance;
-
             return instance;
 
         };

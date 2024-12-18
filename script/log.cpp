@@ -31,7 +31,6 @@ bool LogManager::CreateLogFile() {
     auto sink = std::make_shared<spdlog::logger>("log", std::move(fileSink));
 
     spdlog::set_default_logger(std::move(sink));
-
     return true;
 
 };
@@ -135,7 +134,6 @@ void LogManager::Log(LogLevel type, const std::string& message, bool shouldBreak
     };
 
     if(shouldBreakLine) LogManager::BreakLine();
-
     return;
 
 };
@@ -188,7 +186,6 @@ void LogManager::SetLogLevel() {
 
         spdlog::set_level(logLevel);
         spdlog::flush_on(logLevel);
-
         return;
 
     };

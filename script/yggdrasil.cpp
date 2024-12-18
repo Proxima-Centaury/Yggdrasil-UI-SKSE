@@ -16,7 +16,6 @@ namespace YGGDRASIL {
         if(!fs::is_directory(platformFolderPath)) return false;
 
         SetGlobal(Global::PathToSKSE, platformFolderPath);
-
         return true;
 
     };
@@ -26,8 +25,9 @@ namespace YGGDRASIL {
     /* --------------------------------------------------------------------------------------------------------------------------------- */
     bool Init(Manager manager) {
 
+        SetGlobal(Global::PathToBackgrounds, "Data\\Interface\\Yggdrasil UI\\Backgrounds");
         SetGlobal(Global::PathToSKSEPlugins, "Data\\SKSE\\Plugins");
-        SetGlobal(Global::PathToUISoundFX, "Sound\\FX\\UI");
+        SetGlobal(Global::PathToUISoundFX, "Data\\Interface\\Yggdrasil UI\\SFX");
         SetGlobal(Global::PluginName, "Yggdrasil UI");
         SetGlobal(Global::SkyrimGOG, "Skyrim Special Edition GOG");
         SetGlobal(Global::SkyrimSteam, "Skyrim Special Edition");
@@ -39,7 +39,6 @@ namespace YGGDRASIL {
         if(manager == Manager::Configuration) {
 
             ConfigurationManager& ConfigurationManagerInstance = ConfigurationManager::GetSingleton();
-
             return ConfigurationManagerInstance.Init();
 
         };
@@ -47,7 +46,6 @@ namespace YGGDRASIL {
         if(manager == Manager::Log) {
 
             LogManager& LogManagerInstance = LogManager::GetSingleton();
-
             return LogManagerInstance.Init();
 
         };
@@ -64,7 +62,6 @@ namespace YGGDRASIL {
         std::vector<std::string> menus = YGGDRASIL::GetGlobal<std::vector<std::string>>(YGGDRASIL::Global::Menus);
 
         LogManager::Log(LogManager::LogLevel::Debug, std::format("Is \"{}\" handled : {}", menuName, std::find(menus.begin(), menus.end(), menuName) != menus.end()), true);
-
         return std::find(menus.begin(), menus.end(), menuName) != menus.end();
 
     };
@@ -141,6 +138,7 @@ namespace YGGDRASIL {
             case SKSE::MessagingInterface::kDataLoaded : {
 
                 feedback = "Data is successfully loaded";
+
                 auto UI = UIManager::GetSingleton();
                 RE::UI::GetSingleton()->AddEventSink<RE::MenuOpenCloseEvent>(UI);
                 break;
@@ -158,7 +156,6 @@ namespace YGGDRASIL {
         LogManager::Log(LogManager::LogLevel::Info, std::format("\"{}\" sending message type {}", sender, type), false);
         LogManager::Log(LogManager::LogLevel::Info, std::format("Receiving data : {}", data), false);
         LogManager::Log(LogManager::LogLevel::Info, std::format("Message : \"{}\"", feedback), true);
-
         return;
 
     };

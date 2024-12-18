@@ -7,7 +7,6 @@ class UIManager : public RE::BSTEventSink<RE::MenuOpenCloseEvent> {
         static UIManager* GetSingleton() {
 
             static UIManager instance;
-
             return &instance;
 
         };

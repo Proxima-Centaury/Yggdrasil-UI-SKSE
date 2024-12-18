@@ -4,14 +4,6 @@ class LogManager {
 
     public :
 
-        static LogManager& GetSingleton() {
-
-            static LogManager instance;
-
-            return instance;
-
-        };
-
         enum class LogLevel {
 
             Critical,
@@ -20,6 +12,13 @@ class LogManager {
             Info,
             Trace,
             Warn
+
+        };
+
+        static LogManager& GetSingleton() {
+
+            static LogManager instance;
+            return instance;
 
         };
 
