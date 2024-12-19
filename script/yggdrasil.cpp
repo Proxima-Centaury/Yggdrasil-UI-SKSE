@@ -4,12 +4,12 @@ std::unordered_map<YGGDRASIL::Global, std::any> globalVariables;
 
 namespace YGGDRASIL {
 
-    /* --------------------------------------------------------------------------------------------------------------------------------- */
-    /* FINDS WHICH SKYRIM VERSION TO USE ( GOG / STEAM ) */
-    /* --------------------------------------------------------------------------------------------------------------------------------- */
+    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
+    // FINDS WHICH SKYRIM VERSION TO USE ( GOG / STEAM )
+    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
     bool FindPlatform(const char* platform) {
 
-        std::string pathToMyGames = GetGlobal<std::string>(YGGDRASIL::Global::PathToMyGames);
+        std::string pathToMyGames = GetGlobal<std::string>(Global::PathToMyGames);
         std::string platformFolderPath = std::format("{}\\{}\\SKSE", pathToMyGames, platform);
 
         if(!fs::exists(platformFolderPath)) return false;
@@ -20,9 +20,9 @@ namespace YGGDRASIL {
 
     };
 
-    /* --------------------------------------------------------------------------------------------------------------------------------- */
-    /* TRIGGERS MANAGERS INITIALIZATION */
-    /* --------------------------------------------------------------------------------------------------------------------------------- */
+    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
+    // TRIGGERS MANAGERS INITIALIZATION
+    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
     bool Init(Manager manager) {
 
         SetGlobal(Global::PathToBackgrounds, "Data\\Interface\\Yggdrasil UI\\Backgrounds");
@@ -34,7 +34,7 @@ namespace YGGDRASIL {
 
         std::vector<std::string> menus = { "Main Menu" };
 
-        SetGlobal(YGGDRASIL::Global::Menus, menus);
+        SetGlobal(Global::Menus, menus);
 
         if(manager == Manager::Configuration) {
 
@@ -54,22 +54,22 @@ namespace YGGDRASIL {
 
     };
 
-    /* --------------------------------------------------------------------------------------------------------------------------------- */
-    /* CHECKS IF SPECIFIC MENU IS HANDLED BY YGGDRASIL UI */
-    /* --------------------------------------------------------------------------------------------------------------------------------- */
-    bool YGGDRASIL::IsMenuHandled(std::string menuName) {
+    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
+    // CHECKS IF SPECIFIC MENU IS HANDLED BY YGGDRASIL UI
+    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
+    bool IsMenuHandled(std::string menuName) {
 
-        std::vector<std::string> menus = YGGDRASIL::GetGlobal<std::vector<std::string>>(YGGDRASIL::Global::Menus);
+        std::vector<std::string> menus = GetGlobal<std::vector<std::string>>(Global::Menus);
 
         LogManager::Log(LogManager::LogLevel::Debug, std::format("Is \"{}\" handled : {}", menuName, std::find(menus.begin(), menus.end(), menuName) != menus.end()), true);
         return std::find(menus.begin(), menus.end(), menuName) != menus.end();
 
     };
 
-    /* --------------------------------------------------------------------------------------------------------------------------------- */
-    /* LISTENS FOR SKSE MESSAGES */
-    /* --------------------------------------------------------------------------------------------------------------------------------- */
-    void YGGDRASIL::OnSKSEMessage(SKSE::MessagingInterface::Message* message) {
+    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
+    // LISTENS FOR SKSE MESSAGES
+    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
+    void OnSKSEMessage(SKSE::MessagingInterface::Message* message) {
 
         std::string feedback;
 
