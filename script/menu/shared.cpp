@@ -94,24 +94,6 @@ void SharedMenuManager::SKSEGetConfiguration(const RE::FxDelegateArgs& args) {
 };
 
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
-// RETURNS CURRENT PLATFORM
-// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
-void SharedMenuManager::SKSEGetPlatform(const RE::FxDelegateArgs& args) {
-
-    LogManager::Log(LogManager::LogLevel::Debug, "Executing \"SKSEGetPlatform\" from UI GameDelegate call", true);
-
-    SKSELog(args);
-
-    auto movieClip = args.GetMovie();
-
-    RE::GFxValue response;
-    movieClip->CreateObject(&response);
-
-    movieClip->SetVariable("platform", response);
-
-};
-
-// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 // RETURNS GAME, SKSE AND YGUI VERSIONS
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 void SharedMenuManager::SKSEGetVersions(const RE::FxDelegateArgs& args) {

@@ -31,16 +31,6 @@ namespace YGGDRASIL {
 
     };
 
-    enum class Platform {
-
-        PC_Gamepad,
-        PC_Keyboard_Mouse,
-        PlayStation,
-        Xbox,
-        Z_Unknown
-
-    };
-
     inline std::unordered_map<Global, std::any> globalVariables;
 
     template <typename UnknownType>
@@ -69,13 +59,10 @@ namespace YGGDRASIL {
 
     };
 
-    void OnInputEvent(RE::InputEvent* event);
     void OnSKSEMessage(SKSE::MessagingInterface::Message* message);
 
     bool FindPlatform(const char* platform);
     bool Init(Manager manager);
     bool IsMenuHandled(std::string menuName);
-
-    Platform DetectPlatform(RE::InputEvent* event);
 
 };

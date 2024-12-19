@@ -5,43 +5,6 @@ std::unordered_map<YGGDRASIL::Global, std::any> globalVariables;
 namespace YGGDRASIL {
 
     // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
-    // DETECTS CURRENT PLATFORM ( PC / PLAYSTATION / XBOX )
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
-    Platform DetectPlatform(RE::InputEvent* event) {
-
-        if(!event) return Platform::Z_Unknown;
-
-        switch(event->device.get()) {
-
-            case RE::INPUT_DEVICE::kKeyboard : {
-
-                return Platform::PC_Keyboard_Mouse;
-
-            };
-
-            case RE::INPUT_DEVICE::kMouse : {
-
-                return Platform::PC_Keyboard_Mouse;
-
-            };
-
-            case RE::INPUT_DEVICE::kGamepad : {
-
-                return Platform::PC_Gamepad;
-
-            };
-
-            default : {
-
-                return Platform::Z_Unknown;
-
-            };
-
-        };
-
-    };
-
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
     // FINDS WHICH SKYRIM VERSION TO USE ( GOG / STEAM )
     // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
     bool FindPlatform(const char* platform) {
@@ -100,20 +63,6 @@ namespace YGGDRASIL {
 
         LogManager::Log(LogManager::LogLevel::Debug, std::format("Is \"{}\" handled : {}", menuName, std::find(menus.begin(), menus.end(), menuName) != menus.end()), true);
         return std::find(menus.begin(), menus.end(), menuName) != menus.end();
-
-    };
-
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
-    // LISTENS FOR INPUT EVENTS
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
-    void OnInputEvent(RE::InputEvent* event) {
-
-        if(event) {
-
-            Platform platform = DetectPlatform(event);
-            LogManager::Log(LogManager::LogLevel::Info, std::format("Current platform : \"{}\"", static_cast<int>(platform)), true);
-
-        };
 
     };
 

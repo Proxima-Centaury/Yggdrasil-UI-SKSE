@@ -10,7 +10,6 @@ class SharedMenuManager : public RE::FxDelegateHandler {
 
             processor->Process("SKSEDefineEnvironment", SharedMenuManager::SKSEDefineEnvironment);
             processor->Process("SKSEGetConfiguration", SharedMenuManager::SKSEGetConfiguration);
-            processor->Process("SKSEGetPlatform", SharedMenuManager::SKSEGetPlatform);
             processor->Process("SKSEGetVersions", SharedMenuManager::SKSEGetVersions);
             processor->Process("SKSELog", SharedMenuManager::SKSELog);
             processor->Process("SKSEQuitGame", SharedMenuManager::SKSEQuitGame);
@@ -23,7 +22,6 @@ class SharedMenuManager : public RE::FxDelegateHandler {
 
         static void SKSEDefineEnvironment(const RE::FxDelegateArgs& args);
         static void SKSEGetConfiguration(const RE::FxDelegateArgs& args);
-        static void SKSEGetPlatform(const RE::FxDelegateArgs& args);
         static void SKSEGetVersions(const RE::FxDelegateArgs& args);
         static void SKSELog(const RE::FxDelegateArgs& args);
         static void SKSELogProcessArgument(const RE::GFxValue& arg, std::uint32_t index, std::uint32_t depth);
