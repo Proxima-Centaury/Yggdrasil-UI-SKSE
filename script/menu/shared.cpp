@@ -108,7 +108,7 @@ void SharedMenuManager::SKSEGetVersions(const RE::FxDelegateArgs& args) {
     movieClip->CreateObject(&response);
 
     response.SetMember("GAME", RE::GFxValue(YGGDRASIL::GetGlobal<std::string>(YGGDRASIL::Global::GAMEVersion)));
-    // response.SetMember("SKSE", RE::GFxValue(YGGDRASIL::GetGlobal<std::string>(YGGDRASIL::Global::SKSEVersion)));
+    response.SetMember("SKSE", RE::GFxValue(YGGDRASIL::GetGlobal<std::string>(YGGDRASIL::Global::SKSEVersion)));
     response.SetMember("YGUI", RE::GFxValue(YGGDRASIL::GetGlobal<std::string>(YGGDRASIL::Global::YGUIVersion)));
 
     movieClip->SetVariable("versions", response);

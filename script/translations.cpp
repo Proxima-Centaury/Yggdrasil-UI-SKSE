@@ -196,6 +196,8 @@ bool TranslationsManager::WriteInTranslationsFile(const std::string& skyrimTrans
 
     };
 
+    LogManager::Log(LogManager::LogLevel::Info, std::format("Successfully added \"Yggdrasil UI\" translations to : \"{}\"", skyrimTranslationsFilePath), true);
+
     file.close();
     return true;
 
