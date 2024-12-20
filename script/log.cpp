@@ -1,8 +1,8 @@
 #include "../include/yggdrasil.h"
 
-/* --------------------------------------------------------------------------------------------------------------------------------- */
-/* ADDS A LINE BREAK IN LOG FILE */
-/* --------------------------------------------------------------------------------------------------------------------------------- */
+// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
+// ADDS A LINE BREAK IN LOG FILE
+// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 void LogManager::BreakLine() {
 
     auto logger = spdlog::get("log");
@@ -12,9 +12,9 @@ void LogManager::BreakLine() {
 
 };
 
-/* --------------------------------------------------------------------------------------------------------------------------------- */
-/* CREATES LOG FILE */
-/* --------------------------------------------------------------------------------------------------------------------------------- */
+// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
+// CREATES LOG FILE
+// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 bool LogManager::CreateLogFile() {
 
     std::string pathToSKSE = GetGlobal<std::string>(YGGDRASIL::Global::PathToSKSE);
@@ -35,9 +35,9 @@ bool LogManager::CreateLogFile() {
 
 };
 
-/* --------------------------------------------------------------------------------------------------------------------------------- */
-/* INITIALIZES LOG MANAGER */
-/* --------------------------------------------------------------------------------------------------------------------------------- */
+// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
+// INITIALIZES LOG MANAGER
+// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 bool LogManager::Init() {
 
     PWSTR myDocuments = NULL;
@@ -48,6 +48,8 @@ bool LogManager::Init() {
 
         size_t convertedChars = 0;
         errno_t result = wcstombs_s(&convertedChars, myDocumentsFolderPath, sizeof(myDocumentsFolderPath), myDocuments, _TRUNCATE);
+
+        if(result == 0) std::cout << "Conversion successful : " << myDocumentsFolderPath << "\n";
 
         if(!myDocumentsFolderPath) SKSE::stl::report_and_fail("Documents path not found, logs disabled.");
 
@@ -64,13 +66,23 @@ bool LogManager::Init() {
 
         if(foundGOG) {
 
-            if(CreateLogFile()) return true;
+            if(CreateLogFile()) {
+
+                YGGDRASIL::SetGlobal(YGGDRASIL::Global::CurrentPlatform, YGGDRASIL::GetGlobal<const char*>(YGGDRASIL::Global::SkyrimGOG));
+                return true;
+
+            };
 
         };
 
         if(foundSteam) {
 
-            if(CreateLogFile()) return true;
+            if(CreateLogFile()) {
+
+                YGGDRASIL::SetGlobal(YGGDRASIL::Global::CurrentPlatform, YGGDRASIL::GetGlobal<const char*>(YGGDRASIL::Global::SkyrimSteam));
+                return true;
+
+            };
 
         };
 
@@ -82,9 +94,9 @@ bool LogManager::Init() {
 
 };
 
-/* --------------------------------------------------------------------------------------------------------------------------------- */
-/* SWITCHES LOG */
-/* --------------------------------------------------------------------------------------------------------------------------------- */
+// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
+// SWITCHES LOG
+// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 void LogManager::Log(LogLevel type, const std::string& message, bool shouldBreakLine) {
 
     switch(type) {
@@ -133,14 +145,14 @@ void LogManager::Log(LogLevel type, const std::string& message, bool shouldBreak
 
     };
 
-    if(shouldBreakLine) LogManager::BreakLine();
+    if(shouldBreakLine) BreakLine();
     return;
 
 };
 
-/* --------------------------------------------------------------------------------------------------------------------------------- */
-/* SETS LOG LEVEL */
-/* --------------------------------------------------------------------------------------------------------------------------------- */
+// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
+// SETS LOG LEVEL
+// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 void LogManager::SetLogLevel() {
 
     std::string pathToConfigurationFile = YGGDRASIL::GetGlobal<std::string>(YGGDRASIL::Global::PathToConfigurationFile);
@@ -148,6 +160,8 @@ void LogManager::SetLogLevel() {
     CSimpleIniA configuration = &ConfigurationManager::GetSingleton();
 
     SI_Error configurationLoadState = configuration.LoadFile(pathToConfigurationFile.c_str());
+
+    if(configurationLoadState == 0) std::cout << "Configuration file loaded" << "\n";
 
     const char* defaultLogLevel = "Trace";
     const char* userLogLevelPreference = configuration.GetValue("DEBUG", "SetLogLevel", defaultLogLevel);
