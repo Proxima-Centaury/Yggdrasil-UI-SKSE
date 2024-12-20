@@ -25,7 +25,7 @@ SFXManager::SFXManager() : device(nullptr), context(nullptr), terminate(false) {
 
     };
 
-    for(int i = 0; i < std::thread::hardware_concurrency(); ++i) { workers.emplace_back([this]() { WorkerThread(); }); };
+    for(unsigned int i = 0; i < std::thread::hardware_concurrency(); ++i) { workers.emplace_back([this]() { WorkerThread(); }); };
 
 };
 

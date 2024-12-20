@@ -19,8 +19,9 @@ add_commonlibsse_plugin(${PROJECT_NAME}
 
         script/configuration.cpp
         script/log.cpp
-        script/ui.cpp
         script/sfx.cpp
+        script/translations.cpp
+        script/ui.cpp
         script/yggdrasil.cpp
 
         script/menu/shared.cpp

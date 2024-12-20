@@ -3,7 +3,7 @@
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 // LISTENS FOR MENU OPEN AND CLOSE EVENTS
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
-RE::BSEventNotifyControl UIManager::ProcessEvent(const RE::MenuOpenCloseEvent* event, RE::BSTEventSource<RE::MenuOpenCloseEvent>* eventSource) {
+RE::BSEventNotifyControl UIManager::ProcessEvent(const RE::MenuOpenCloseEvent* event, RE::BSTEventSource<RE::MenuOpenCloseEvent>*) {
 
     std::string menuName = event->menuName.c_str();
 
