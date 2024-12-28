@@ -4,17 +4,25 @@ namespace YGGDRASIL {
 
     enum class Global {
 
+        CurrentPlatform,
+        GAMEVersion,
         Menus,
         MenuState,
+        PathToBackgrounds,
         PathToConfigurationFile,
         PathToLogFile,
         PathToMyGames,
         PathToMyDocuments,
         PathToSKSE,
         PathToSKSEPlugins,
+        PathToSkyrimInterface,
+        PathToUISoundFX,
+        PathToUITranslationsFiles,
         PluginName,
+        SKSEVersion,
         SkyrimGOG,
-        SkyrimSteam
+        SkyrimSteam,
+        YGUIVersion
 
     };
 
@@ -22,6 +30,7 @@ namespace YGGDRASIL {
 
         Configuration,
         Log,
+        Translation,
         UI
 
     };
@@ -47,17 +56,19 @@ namespace YGGDRASIL {
 
     };
 
-    template <typename UnknownType>
-    void SetGlobal(Global variable, UnknownType value) {
-
-        globalVariables[variable] = value;
-
-    };
-
-    void Init(Manager manager);
-    void OnSKSEMessage(SKSE::MessagingInterface::Message* message);
-
     bool FindPlatform(const char* platform);
-    bool IsMenuHandled(const const char& menuName);
+    bool Init(Manager manager);
+    bool IsMenuHandled(std::string menuName);
+
+    void OnSKSEMessage(SKSE::MessagingInterface::Message* message);
+    template <typename UnknownType>
+    void SetGlobal(Global variable, UnknownType value) { globalVariables[variable] = value; };
+    void ToggleDebuggingConsole(bool flag);
+    void TrimLeadingSpaces(std::string& text);
+    void TrimTrailingSpaces(std::string& text);
+
+    std::string UTF16ToUTF8(const std::wstring& utf16String);
+
+    std::wstring UTF8ToUTF16(const std::string& utf8String);
 
 };
