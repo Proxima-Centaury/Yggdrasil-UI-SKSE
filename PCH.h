@@ -20,6 +20,8 @@
 
 #include "dependencies/SimpleINI/SimpleIni.h" // Dependency : manual integration
 
+#include "dependencies/SimpleINI/SimpleIni.h"
+
 #include "RE/Skyrim.h" // Dependency : vcpkg integration
 #include "SKSE/SKSE.h" // Dependency : vcpkg integration
 
