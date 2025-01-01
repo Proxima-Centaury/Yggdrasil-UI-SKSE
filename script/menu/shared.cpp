@@ -49,7 +49,6 @@ void SharedMenuManager::SKSEGetMenu(const RE::FxDelegateArgs& args) {
 			RE::GFxValue mainmenu;
 			movieClip->CreateArray(&mainmenu);
 
-<<<<<<< HEAD
 			menu.addItem(YGGDRASIL::MenuItem(false, "Continue", std::nullopt, false, "$YGUI_STARTMENU_MAIN_MENU_MENU_ITEM_CONTINUE"));
 			menu.addItem(YGGDRASIL::MenuItem(false, "New", std::nullopt, false, "$YGUI_STARTMENU_MAIN_MENU_MENU_ITEM_NEW"));
 			menu.addItem(YGGDRASIL::MenuItem(false, "Load", std::nullopt, false, "$YGUI_STARTMENU_MAIN_MENU_MENU_ITEM_LOAD"));
@@ -57,15 +56,6 @@ void SharedMenuManager::SKSEGetMenu(const RE::FxDelegateArgs& args) {
 			menu.addItem(YGGDRASIL::MenuItem(false, "Creation Club", std::nullopt, false, "$YGUI_STARTMENU_MAIN_MENU_MENU_ITEM_CREATION_CLUB"));
 			menu.addItem(YGGDRASIL::MenuItem(false, "Credits", std::nullopt, false, "$YGUI_STARTMENU_MAIN_MENU_MENU_ITEM_CREDITS"));
 			menu.addItem(YGGDRASIL::MenuItem(false, "Quit", std::nullopt, false, "$YGUI_STARTMENU_MAIN_MENU_MENU_ITEM_QUIT"));
-=======
-			menu.addItem(YGGDRASIL::MenuItem(false, "Continue", std::nullopt, false, "YGUI_STARTMENU_MAIN_MENU_MENU_ITEM_CONTINUE"));
-			menu.addItem(YGGDRASIL::MenuItem(false, "New", std::nullopt, false, "YGUI_STARTMENU_MAIN_MENU_MENU_ITEM_NEW"));
-			menu.addItem(YGGDRASIL::MenuItem(false, "Load", std::nullopt, false, "YGUI_STARTMENU_MAIN_MENU_MENU_ITEM_LOAD"));
-			menu.addItem(YGGDRASIL::MenuItem(false, "Settings", std::nullopt, false, "YGUI_STARTMENU_MAIN_MENU_MENU_ITEM_SETTINGS"));
-			menu.addItem(YGGDRASIL::MenuItem(false, "Creation Club", std::nullopt, false, "YGUI_STARTMENU_MAIN_MENU_MENU_ITEM_CREATION_CLUB"));
-			menu.addItem(YGGDRASIL::MenuItem(false, "Credits", std::nullopt, false, "YGUI_STARTMENU_MAIN_MENU_MENU_ITEM_CREDITS"));
-			menu.addItem(YGGDRASIL::MenuItem(false, "Quit", std::nullopt, false, "YGUI_STARTMENU_MAIN_MENU_MENU_ITEM_QUIT"));
->>>>>>> ad99b7368ca2d38205520e558c9e95a3d3348816
 
 			for(size_t i = 0; i < menu.items.size(); ++i) { mainmenu.PushBack(YGGDRASIL::MenuItemToGFxValue(menu.items[i], movieClip)); };
 

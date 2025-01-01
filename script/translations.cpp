@@ -166,7 +166,7 @@ bool TranslationsManager::WriteInTranslationsFile(const std::string& skyrimTrans
 
     std::string skyrimTranslationsFilePath = std::format("{}\\{}", YGGDRASIL::GetGlobal<const char *>(YGGDRASIL::Global::PathToSkyrimInterface), skyrimTranslationsFileName);
 
-    ReadExistingTranslationKeys(skyrimTranslationsFilePath);
+    // ReadExistingTranslationKeys(skyrimTranslationsFilePath);
 
     // Append mode
     // std::ofstream file(skyrimTranslationsFilePath, std::ios::binary | std::ios::app);
@@ -185,17 +185,18 @@ bool TranslationsManager::WriteInTranslationsFile(const std::string& skyrimTrans
         std::wstring wideKey = YGGDRASIL::UTF8ToUTF16(key);
         std::wstring wideValue = YGGDRASIL::UTF8ToUTF16(value);
 
-        if(existingKeys.find(key) != existingKeys.end()) continue;
+        // if(existingKeys.find(key) != existingKeys.end()) continue;
 
-        wchar_t newline[] = L"\r\n";
-
-        file.write(reinterpret_cast<const char*>(newline), 2 * sizeof(wchar_t));
         file.write(reinterpret_cast<const char*>(wideKey.c_str()), wideKey.size() * sizeof(wchar_t));
 
         wchar_t separator = L'\t';
 
         file.write(reinterpret_cast<const char*>(&separator), sizeof(wchar_t));
         file.write(reinterpret_cast<const char*>(wideValue.c_str()), wideValue.size() * sizeof(wchar_t));
+
+        wchar_t newline[] = L"\r\n";
+
+        file.write(reinterpret_cast<const char*>(newline), 2 * sizeof(wchar_t));
 
     };
 
