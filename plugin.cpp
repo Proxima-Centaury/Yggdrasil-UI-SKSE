@@ -14,12 +14,17 @@ extern "C" DLLEXPORT bool SKSEPlugin_Load(const SKSE::LoadInterface* skse) {
 
     auto extenderVersion = skse->SKSEVersion();
     auto runtimeVersion = skse->RuntimeVersion();
-    
+
+    uint32_t extenderMajor = (extenderVersion >> 24) & 0xFF;
+    uint32_t extenderMinor = (extenderVersion >> 16) & 0xFF;
+    uint32_t extenderPatch = extenderVersion & 0xFF;
+
     std::string gameVersion = std::format("{}.{}.{}", runtimeVersion.major(), runtimeVersion.minor(), runtimeVersion.patch());
+    std::string skseVersion = std::format("{}.{}.{}", extenderMajor, extenderMinor, extenderPatch / 0x10);
     std::string uiVersion = "1.0.0";
 
     YGGDRASIL::SetGlobal(YGGDRASIL::Global::GAMEVersion, gameVersion);
-    YGGDRASIL::SetGlobal(YGGDRASIL::Global::SKSEVersion, extenderVersion);
+    YGGDRASIL::SetGlobal(YGGDRASIL::Global::SKSEVersion, skseVersion);
     YGGDRASIL::SetGlobal(YGGDRASIL::Global::YGUIVersion, uiVersion);
 
     if(isConfigurationInitialized && isLogInitialized && isTranslationInitialized) {

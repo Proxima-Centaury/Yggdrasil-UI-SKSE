@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.21)
 
-project(_Yggdrasil_UI VERSION 0.0.1 LANGUAGES CXX)
+project(_Yggdrasil_UI VERSION 1.0.0 LANGUAGES CXX)
 
 set(PROJECT_DISPLAY_NAME "Yggdrasil UI")
 
@@ -22,6 +22,7 @@ add_commonlibsse_plugin(${PROJECT_NAME}
         script/sfx.cpp
         script/translations.cpp
         script/ui.cpp
+        script/sfx.cpp
         script/yggdrasil.cpp
 
         script/menu/shared.cpp

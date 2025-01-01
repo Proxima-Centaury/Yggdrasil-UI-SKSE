@@ -8,6 +8,7 @@
 #include <fstream>
 #include <iostream>
 #include <locale>
+#include <optional>
 #include <shlobj.h>
 #include <sstream>
 #include <stdio.h>
@@ -35,6 +36,7 @@
 #include "include/sfx.h"
 #include "include/translations.h"
 #include "include/ui.h"
+#include "include/sfx.h"
 
 #include "include/menu/shared.h"
 

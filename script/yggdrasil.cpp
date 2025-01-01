@@ -4,259 +4,277 @@ std::unordered_map<YGGDRASIL::Global, std::any> globalVariables;
 
 namespace YGGDRASIL {
 
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
-    // FINDS WHICH SKYRIM VERSION TO USE ( GOG / STEAM )
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
-    bool FindPlatform(const char* platform) {
+	// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
+	// FINDS WHICH SKYRIM VERSION TO USE ( GOG / STEAM )
+	// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
+	bool FindPlatform(const char* platform) {
 
-        std::string pathToMyGames = GetGlobal<std::string>(Global::PathToMyGames);
-        std::string platformFolderPath = std::format("{}\\{}\\SKSE", pathToMyGames, platform);
+		std::string pathToMyGames = GetGlobal<std::string>(Global::PathToMyGames);
+		std::string platformFolderPath = std::format("{}\\{}\\SKSE", pathToMyGames, platform);
 
-        if(!fs::exists(platformFolderPath)) return false;
-        if(!fs::is_directory(platformFolderPath)) return false;
+		if(!fs::exists(platformFolderPath)) return false;
+		if(!fs::is_directory(platformFolderPath)) return false;
 
-        SetGlobal(Global::PathToSKSE, platformFolderPath);
-        return true;
+		SetGlobal(Global::PathToSKSE, platformFolderPath);
+		return true;
 
-    };
+	};
 
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
-    // TRIGGERS MANAGERS INITIALIZATION
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
-    bool Init(Manager manager) {
+	// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
+	// TRIGGERS MANAGERS INITIALIZATION
+	// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
+	bool Init(Manager manager) {
 
-        SetGlobal(Global::PathToBackgrounds, "Data\\Interface\\Yggdrasil UI\\Backgrounds");
-        SetGlobal(Global::PathToSKSEPlugins, "Data\\SKSE\\Plugins");
-        SetGlobal(Global::PathToSkyrimInterface, "Data\\Interface");
-        SetGlobal(Global::PathToUISoundFX, "Data\\Interface\\Yggdrasil UI\\SFX");
-        SetGlobal(Global::PathToUITranslationsFiles, "Data\\Interface\\Yggdrasil UI\\Translations");
-        SetGlobal(Global::PluginName, "Yggdrasil UI");
-        SetGlobal(Global::SkyrimGOG, "Skyrim Special Edition GOG");
-        SetGlobal(Global::SkyrimSteam, "Skyrim Special Edition");
+		SetGlobal(Global::PathToBackgrounds, "Data\\Interface\\Yggdrasil UI\\Backgrounds");
+		SetGlobal(Global::PathToSKSEPlugins, "Data\\SKSE\\Plugins");
+		SetGlobal(Global::PathToSkyrimInterface, "Data\\Interface");
+		SetGlobal(Global::PathToUISoundFX, "Data\\Interface\\Yggdrasil UI\\SFX");
+		SetGlobal(Global::PathToUITranslationsFiles, "Data\\Interface\\Yggdrasil UI\\Translations");
+		SetGlobal(Global::PluginName, "Yggdrasil UI");
+		SetGlobal(Global::SkyrimGOG, "Skyrim Special Edition GOG");
+		SetGlobal(Global::SkyrimSteam, "Skyrim Special Edition");
 
-        std::vector<std::string> menus = { "Main Menu" };
+		std::vector<std::string> menus = { "Main Menu" };
 
-        SetGlobal(Global::Menus, menus);
+		SetGlobal(Global::Menus, menus);
 
-        if(manager == Manager::Configuration) {
+		if(manager == Manager::Configuration) {
 
-            ConfigurationManager& ConfigurationManagerInstance = ConfigurationManager::GetSingleton();
-            return ConfigurationManagerInstance.Init();
+			ConfigurationManager& ConfigurationManagerInstance = ConfigurationManager::GetSingleton();
+			return ConfigurationManagerInstance.Init();
 
-        };
+		};
 
-        if(manager == Manager::Log) {
+		if(manager == Manager::Log) {
 
-            LogManager& LogManagerInstance = LogManager::GetSingleton();
-            return LogManagerInstance.Init();
+			LogManager& LogManagerInstance = LogManager::GetSingleton();
+			return LogManagerInstance.Init();
 
-        };
+		};
 
-        if(manager == Manager::Translation) {
+		if(manager == Manager::Translation) {
 
-            TranslationsManager& TranslationsManagerInstance = TranslationsManager::GetSingleton();
-            return TranslationsManagerInstance.Init();
+			TranslationsManager& TranslationsManagerInstance = TranslationsManager::GetSingleton();
+			return TranslationsManagerInstance.Init();
 
-        };
+		};
 
-        return false;
+		return false;
 
-    };
+	};
 
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
-    // CHECKS IF SPECIFIC MENU IS HANDLED BY YGGDRASIL UI
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
-    bool IsMenuHandled(std::string menuName) {
+	// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
+	// CHECKS IF SPECIFIC MENU IS HANDLED BY YGGDRASIL UI
+	// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
+	bool IsMenuHandled(std::string menuName) {
 
-        std::vector<std::string> menus = GetGlobal<std::vector<std::string>>(Global::Menus);
+		std::vector<std::string> menus = GetGlobal<std::vector<std::string>>(Global::Menus);
 
-        LogManager::Log(LogManager::LogLevel::Debug, std::format("Is \"{}\" handled : {}", menuName, std::find(menus.begin(), menus.end(), menuName) != menus.end()), true);
-        return std::find(menus.begin(), menus.end(), menuName) != menus.end();
+		LogManager::Log(LogManager::LogLevel::Debug, std::format("Is \"{}\" handled : {}", menuName, std::find(menus.begin(), menus.end(), menuName) != menus.end()), true);
+		return std::find(menus.begin(), menus.end(), menuName) != menus.end();
 
-    };
+	};
 
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
-    // LISTENS FOR SKSE MESSAGES
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
-    void OnSKSEMessage(SKSE::MessagingInterface::Message* message) {
+	// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
+	// CONVERTS MENU ITEMS TO GFXVALUE
+	// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
+	RE::GFxValue MenuItemToGFxValue(const MenuItem& item, RE::GFxMovieView* view) {
 
-        std::string feedback;
+		RE::GFxValue object;
+		view->CreateObject(&object);
 
-        auto data = message->data;
-        auto sender = message->sender;
-        auto type = message->type;
+		object.SetMember("disabled", RE::GFxValue(item.disabled));
+		object.SetMember("label", RE::GFxValue(item.label.c_str()));
+		object.SetMember("path", (item.path) ? RE::GFxValue(item.path->c_str()) : RE::GFxValue(RE::GFxValue::ValueType::kNull));
+		object.SetMember("selected", RE::GFxValue(item.selected));
+		object.SetMember("text", RE::GFxValue(item.text.c_str()));
 
-        switch(type) {
+		return object;
 
-            case SKSE::MessagingInterface::kPostLoad : {
+	};
 
-                feedback = "All SKSE plugins are successfully loaded";
-                break;
+	// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
+	// LISTENS FOR SKSE MESSAGES
+	// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
+	void OnSKSEMessage(SKSE::MessagingInterface::Message* message) {
 
-            };
+		std::string feedback;
 
-            case SKSE::MessagingInterface::kPostPostLoad : {
+		auto data = message->data;
+		auto sender = message->sender;
+		auto type = message->type;
 
-                feedback = "??? - Message unclear ( PostPostLoad )";
-                break;
+		switch(type) {
 
-            };
+			case SKSE::MessagingInterface::kPostLoad : {
 
-            case SKSE::MessagingInterface::kPreLoadGame : {
+				feedback = "All SKSE plugins are successfully loaded";
+				break;
 
-                feedback = "A save is being loaded";
-                break;
+			};
 
-            };
+			case SKSE::MessagingInterface::kPostPostLoad : {
 
-            case SKSE::MessagingInterface::kPostLoadGame : {
+				feedback = "??? - Message unclear ( PostPostLoad )";
+				break;
 
-                feedback = "A save has been loaded";
-                break;
+			};
 
-            };
+			case SKSE::MessagingInterface::kPreLoadGame : {
 
-            case SKSE::MessagingInterface::kSaveGame : {
+				feedback = "A save is being loaded";
+				break;
 
-                feedback = "The game is being saved";
-                break;
+			};
 
-            };
+			case SKSE::MessagingInterface::kPostLoadGame : {
 
-            case SKSE::MessagingInterface::kDeleteGame : {
+				feedback = "A save has been loaded";
+				break;
 
-                feedback = "A save is being deleted";
-                break;
+			};
 
-            };
+			case SKSE::MessagingInterface::kSaveGame : {
 
-            case SKSE::MessagingInterface::kInputLoaded : {
+				feedback = "The game is being saved";
+				break;
 
-                feedback = "All inputs are loaded";
-                break;
+			};
 
-            };
+			case SKSE::MessagingInterface::kDeleteGame : {
 
-            case SKSE::MessagingInterface::kNewGame : {
+				feedback = "A save is being deleted";
+				break;
 
-                feedback = "A new game is starting";
-                break;
+			};
 
-            };
+			case SKSE::MessagingInterface::kInputLoaded : {
 
-            case SKSE::MessagingInterface::kDataLoaded : {
+				feedback = "All inputs are loaded";
+				break;
 
-                feedback = "Data is successfully loaded";
+			};
 
-                auto UI = UIManager::GetSingleton();
-                RE::UI::GetSingleton()->AddEventSink<RE::MenuOpenCloseEvent>(UI);
-                break;
+			case SKSE::MessagingInterface::kNewGame : {
 
-            };
+				feedback = "A new game is starting";
+				break;
 
-            case SKSE::MessagingInterface::kTotal : {
+			};
 
-                feedback = "??? - Message unclear ( Total )";
-                break;
+			case SKSE::MessagingInterface::kDataLoaded : {
 
-            };
-        };
+				feedback = "Data is successfully loaded";
 
-        LogManager::Log(LogManager::LogLevel::Info, std::format("\"{}\" sending message type {}", sender, type), false);
-        LogManager::Log(LogManager::LogLevel::Info, std::format("Receiving data : {}", data), false);
-        LogManager::Log(LogManager::LogLevel::Info, std::format("Message : \"{}\"", feedback), true);
-        return;
+				auto UI = UIManager::GetSingleton();
+				RE::UI::GetSingleton()->AddEventSink<RE::MenuOpenCloseEvent>(UI);
+				break;
 
-    };
+			};
 
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
-    // ENABLES OR DISABLES DEBUGGING CONSOLE
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
-    void ToggleDebuggingConsole(bool flag) {
+			case SKSE::MessagingInterface::kTotal : {
 
-        if(flag) {
+				feedback = "??? - Message unclear ( Total )";
+				break;
 
-            AllocConsole();
+			};
+		};
 
-            FILE* stream;
+		LogManager::Log(LogManager::LogLevel::Info, std::format("\"{}\" sending message type {}", sender, type), false);
+		LogManager::Log(LogManager::LogLevel::Info, std::format("Receiving data : {}", data), false);
+		LogManager::Log(LogManager::LogLevel::Info, std::format("Message : \"{}\"", feedback), true);
+		return;
 
-            freopen_s(&stream, "CONOUT$", "w", stdout);
-            freopen_s(&stream, "CONOUT$", "w", stderr);
+	};
 
-        };
+	// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
+	// ENABLES OR DISABLES DEBUGGING CONSOLE
+	// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
+	void ToggleDebuggingConsole(bool flag) {
 
-    };
+		if(flag) {
 
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
-    // TRIMS LEADING SPACES
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
-    void TrimLeadingSpaces(std::string& text) {
+			AllocConsole();
 
-        text.erase(text.begin(), std::find_if(text.begin(), text.end(), [](unsigned char character) {
+			FILE* stream;
 
-            return !std::isspace(character);
+			freopen_s(&stream, "CONOUT$", "w", stdout);
+			freopen_s(&stream, "CONOUT$", "w", stderr);
 
-        }));
+		};
 
-        TrimTrailingSpaces(text);
+	};
 
-    };
+	// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
+	// TRIMS LEADING SPACES
+	// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
+	void TrimLeadingSpaces(std::string& text) {
 
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
-    // TRIMS TRAILING SPACES
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
-    void TrimTrailingSpaces(std::string& text) {
+		text.erase(text.begin(), std::find_if(text.begin(), text.end(), [](unsigned char character) {
 
-        text.erase(std::find_if(text.rbegin(), text.rend(), [](unsigned char character) {
+			return !std::isspace(character);
 
-            return !std::isspace(character);
+		}));
 
-        }).base(), text.end());
+		TrimTrailingSpaces(text);
 
-    };
+	};
 
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
-    // CONVERTS UTF8 STRINGS TO UTF16 STRINGS
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
-    std::wstring UTF8ToUTF16(const std::string& utf8String) {
+	// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
+	// TRIMS TRAILING SPACES
+	// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
+	void TrimTrailingSpaces(std::string& text) {
 
-        if(utf8String.empty()) return std::wstring();
+		text.erase(std::find_if(text.rbegin(), text.rend(), [](unsigned char character) {
 
-        int sizeRequired = MultiByteToWideChar(CP_UTF8, 0, utf8String.c_str(), -1, nullptr, 0);
+			return !std::isspace(character);
 
-        if(sizeRequired == 0) SKSE::stl::report_and_fail("Failed to calculate buffer size for UTF-16 conversion.");
+		}).base(), text.end());
 
-        std::wstring utf16String(sizeRequired, L'\0');
+	};
 
-        int conversionSizeRequired = MultiByteToWideChar(CP_UTF8, 0, utf8String.c_str(), -1, utf16String.data(), sizeRequired);
+	// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
+	// CONVERTS UTF8 STRINGS TO UTF16 STRINGS
+	// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
+	std::wstring UTF8ToUTF16(const std::string& utf8String) {
 
-        if(conversionSizeRequired == 0) SKSE::stl::report_and_fail("Failed UTF-8 to UTF-16 conversion.");
+		if(utf8String.empty()) return std::wstring();
 
-        utf16String.resize(sizeRequired - 1);
-        return utf16String;
+		int sizeRequired = MultiByteToWideChar(CP_UTF8, 0, utf8String.c_str(), -1, nullptr, 0);
 
-    };
+		if(sizeRequired == 0) SKSE::stl::report_and_fail("Failed to calculate buffer size for UTF-16 conversion.");
 
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
-    // CONVERTS UTF16 STRINGS TO UTF8 STRINGS
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
-    std::string UTF16ToUTF8(const std::wstring& utf16String) {
+		std::wstring utf16String(sizeRequired, L'\0');
 
-        if(utf16String.empty()) return std::string();
+		int conversionSizeRequired = MultiByteToWideChar(CP_UTF8, 0, utf8String.c_str(), -1, utf16String.data(), sizeRequired);
 
-        int sizeRequired = WideCharToMultiByte(CP_UTF8, 0, utf16String.c_str(), -1, nullptr, 0, nullptr, nullptr);
+		if(conversionSizeRequired == 0) SKSE::stl::report_and_fail("Failed UTF-8 to UTF-16 conversion.");
 
-        if(sizeRequired == 0) SKSE::stl::report_and_fail("Failed to calculate buffer size for UTF-8 conversion.");
+		utf16String.resize(sizeRequired - 1);
+		return utf16String;
 
-        std::string utf8String(sizeRequired, '\0');
+	};
 
-        int conversionSizeRequired = WideCharToMultiByte(CP_UTF8, 0, utf16String.c_str(), -1, utf8String.data(), sizeRequired, nullptr, nullptr);
+	// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
+	// CONVERTS UTF16 STRINGS TO UTF8 STRINGS
+	// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
+	std::string UTF16ToUTF8(const std::wstring& utf16String) {
 
-        if(conversionSizeRequired == 0) SKSE::stl::report_and_fail("Failed UTF-16 to UTF-8 conversion.");
+		if(utf16String.empty()) return std::string();
 
-        utf8String.resize(sizeRequired - 1);
-        return utf8String;
+		int sizeRequired = WideCharToMultiByte(CP_UTF8, 0, utf16String.c_str(), -1, nullptr, 0, nullptr, nullptr);
 
-    };
+		if(sizeRequired == 0) SKSE::stl::report_and_fail("Failed to calculate buffer size for UTF-8 conversion.");
+
+		std::string utf8String(sizeRequired, '\0');
+
+		int conversionSizeRequired = WideCharToMultiByte(CP_UTF8, 0, utf16String.c_str(), -1, utf8String.data(), sizeRequired, nullptr, nullptr);
+
+		if(conversionSizeRequired == 0) SKSE::stl::report_and_fail("Failed UTF-16 to UTF-8 conversion.");
+
+		utf8String.resize(sizeRequired - 1);
+		return utf8String;
+
+	};
 
 };
