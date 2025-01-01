@@ -116,17 +116,42 @@ bool ConfigurationManager::ResetConfigurationFile() {
 
     configuration.SetValue("DEBUG", "SetLogLevel", "Trace");
 
+    configuration.SetValue("FONTS", "SetConsoleFont", "Default");
+    configuration.SetValue("FONTS", "SetDaedricFont", "Default");
+    configuration.SetValue("FONTS", "SetDialogueFont", "Default");
+    configuration.SetValue("FONTS", "SetDragonFont", "Default");
+    configuration.SetValue("FONTS", "SetDwemerFont", "Default");
+    configuration.SetValue("FONTS", "SetEverywhereBoldFont", "Default");
+    configuration.SetValue("FONTS", "SetEverywhereFont", "Default");
+    configuration.SetValue("FONTS", "SetEverywhereMediumFont", "Default");
+    configuration.SetValue("FONTS", "SetFalmerFont", "Default");
+    configuration.SetValue("FONTS", "SetHandwrittenBoldFont", "Default");
+    configuration.SetValue("FONTS", "SetHandwrittenFont", "Default");
+    configuration.SetValue("FONTS", "SetMageScriptFont", "Default");
+    configuration.SetValue("FONTS", "SetSkyrimBooksFont", "Default");
+    configuration.SetValue("FONTS", "SetSkyrimBooksUnreadableFont", "Default");
+    configuration.SetValue("FONTS", "SetSymbolsFont", "Default");
+    configuration.SetValue("FONTS", "SetStartMenuFont", "Default");
+
+    configuration.SetValue("GENERAL", "SetUIAlignment", "Left");
+
     configuration.SetBoolValue("STARTMENU", "EnableCustomBackground", true);
     configuration.SetBoolValue("STARTMENU", "EnableCustomBackgroundRandomizer", true);
     configuration.SetBoolValue("STARTMENU", "EnableCustomBackgroundVignette", true);
 
-    configuration.SetValue("STARTMENU", "SetMainMenuPosition", "Left");
-    configuration.SetValue("STARTMENU", "SetMenuFont", "$StartMenuFont");
-    configuration.SetValue("STARTMENU", "SetTextFont", "$StartMenuFont");
-    configuration.SetValue("STARTMENU", "SetTitleFont", "$StartMenuFont");
-    configuration.SetValue("STARTMENU", "SetMenuFontColor", "#FFFFFF");
-    configuration.SetValue("STARTMENU", "SetTextFontColor", "#FFFFFF");
-    configuration.SetValue("STARTMENU", "SetTitleFontColor", "#FFFFFF");
+    configuration.SetValue("STARTMENU", "SetConfirmationFontColor", "0x000000");
+    configuration.SetValue("STARTMENU", "SetConfirmationNoFontColor", "0x000000");
+    configuration.SetValue("STARTMENU", "SetConfirmationYesFontColor", "0x000000");
+    configuration.SetValue("STARTMENU", "SetGameVersionFontColor", "0x000000");
+    configuration.SetValue("STARTMENU", "SetGameVersionLabelFontColor", "0x000000");
+    configuration.SetValue("STARTMENU", "SetMenuFontColor", "0x000000");
+    configuration.SetValue("STARTMENU", "SetPressStartFontColor", "0x000000");
+    configuration.SetValue("STARTMENU", "SetSKSEVersionFontColor", "0x000000");
+    configuration.SetValue("STARTMENU", "SetSKSEVersionLabelFontColor", "0x000000");
+    configuration.SetValue("STARTMENU", "SetTitleFontColor", "0x000000");
+    configuration.SetValue("STARTMENU", "SetTitleSequelFontColor", "0x000000");
+    configuration.SetValue("STARTMENU", "SetYggdrasilUIVersionFontColor", "0x000000");
+    configuration.SetValue("STARTMENU", "SetYggdrasilUIVersionLabelFontColor", "0x000000");
     return true;
 
 };
