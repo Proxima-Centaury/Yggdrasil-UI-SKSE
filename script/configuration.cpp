@@ -115,18 +115,6 @@ bool ConfigurationManager::Init() {
 bool ConfigurationManager::ResetConfigurationFile() {
 
     configuration.SetValue("DEBUG", "SetLogLevel", "Trace");
-
-    configuration.SetBoolValue("STARTMENU", "EnableCustomBackground", true);
-    configuration.SetBoolValue("STARTMENU", "EnableCustomBackgroundRandomizer", true);
-    configuration.SetBoolValue("STARTMENU", "EnableCustomBackgroundVignette", true);
-
-    configuration.SetValue("STARTMENU", "SetMainMenuPosition", "Left");
-    configuration.SetValue("STARTMENU", "SetMenuFont", "$StartMenuFont");
-    configuration.SetValue("STARTMENU", "SetTextFont", "$StartMenuFont");
-    configuration.SetValue("STARTMENU", "SetTitleFont", "$StartMenuFont");
-    configuration.SetValue("STARTMENU", "SetMenuFontColor", "#FFFFFF");
-    configuration.SetValue("STARTMENU", "SetTextFontColor", "#FFFFFF");
-    configuration.SetValue("STARTMENU", "SetTitleFontColor", "#FFFFFF");
     return true;
 
 };
