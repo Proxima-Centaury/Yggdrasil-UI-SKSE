@@ -168,7 +168,10 @@ bool TranslationsManager::WriteInTranslationsFile(const std::string& skyrimTrans
 
     ReadExistingTranslationKeys(skyrimTranslationsFilePath);
 
-    std::ofstream file(skyrimTranslationsFilePath, std::ios::binary | std::ios::app);
+    // Append mode
+    // std::ofstream file(skyrimTranslationsFilePath, std::ios::binary | std::ios::app);
+    // Rewrite mode
+    std::ofstream file(skyrimTranslationsFilePath, std::ios::binary | std::ios::trunc);
 
     if(!file.is_open()) {
 
