@@ -49,6 +49,8 @@ bool LogManager::Init() {
         size_t convertedChars = 0;
         errno_t result = wcstombs_s(&convertedChars, myDocumentsFolderPath, sizeof(myDocumentsFolderPath), myDocuments, _TRUNCATE);
 
+        if(result == 0) std::cout << "Conversion successful : " << myDocumentsFolderPath << "\n";
+
         if(!myDocumentsFolderPath) SKSE::stl::report_and_fail("Documents path not found, logs disabled.");
 
         std::wstring wStringMyDocuments(myDocuments);
@@ -64,13 +66,23 @@ bool LogManager::Init() {
 
         if(foundGOG) {
 
-            if(CreateLogFile()) return true;
+            if(CreateLogFile()) {
+
+                YGGDRASIL::SetGlobal(YGGDRASIL::Global::CurrentPlatform, YGGDRASIL::GetGlobal<const char*>(YGGDRASIL::Global::SkyrimGOG));
+                return true;
+
+            };
 
         };
 
         if(foundSteam) {
 
-            if(CreateLogFile()) return true;
+            if(CreateLogFile()) {
+
+                YGGDRASIL::SetGlobal(YGGDRASIL::Global::CurrentPlatform, YGGDRASIL::GetGlobal<const char*>(YGGDRASIL::Global::SkyrimSteam));
+                return true;
+
+            };
 
         };
 
@@ -133,7 +145,7 @@ void LogManager::Log(LogLevel type, const std::string& message, bool shouldBreak
 
     };
 
-    if(shouldBreakLine) LogManager::BreakLine();
+    if(shouldBreakLine) BreakLine();
     return;
 
 };
@@ -148,6 +160,8 @@ void LogManager::SetLogLevel() {
     CSimpleIniA configuration = &ConfigurationManager::GetSingleton();
 
     SI_Error configurationLoadState = configuration.LoadFile(pathToConfigurationFile.c_str());
+
+    if(configurationLoadState == 0) std::cout << "Configuration file loaded" << "\n";
 
     const char* defaultLogLevel = "Trace";
     const char* userLogLevelPreference = configuration.GetValue("DEBUG", "SetLogLevel", defaultLogLevel);

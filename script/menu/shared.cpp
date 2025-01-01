@@ -5,91 +5,67 @@
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 void SharedMenuManager::SKSEDefineEnvironment(const RE::FxDelegateArgs& args) {
 
-    LogManager::Log(LogManager::LogLevel::Debug, "Executing \"SKSEDefineEnvironment\" from UI GameDelegate call", true);
+	LogManager::Log(LogManager::LogLevel::Debug, "Executing \"SKSEDefineEnvironment\" from UI GameDelegate call", true);
 
-    SKSELog(args);
+	SKSELog(args);
 
-    auto movieClip = args.GetMovie();
+	auto movieClip = args.GetMovie();
 
-    RE::GFxValue response;
-    movieClip->CreateObject(&response);
+	RE::GFxValue response;
+	movieClip->CreateObject(&response);
 
-    movieClip->SetVariable("environment", "Skyrim SKSE");
+	movieClip->SetVariable("environment", "Skyrim SKSE");
 
 };
 
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
-// GETS VALUE FROM CONFIGURATION FILE
+// RETURNS MENU ITEMS FOR SPECIFIC MENU
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
-void SharedMenuManager::SKSEGetConfiguration(const RE::FxDelegateArgs& args) {
+void SharedMenuManager::SKSEGetMenu(const RE::FxDelegateArgs& args) {
 
-    LogManager::Log(LogManager::LogLevel::Debug, "Executing \"SKSEGetConfiguration\" from UI GameDelegate call", true);
+	LogManager::Log(LogManager::LogLevel::Debug, "Executing \"SKSEGetMenu\" from UI GameDelegate call", true);
 
-    SKSELog(args);
+	SKSELog(args);
 
-    auto& configurationManager = ConfigurationManager::GetSingleton();
-    const CSimpleIniA& configuration = configurationManager.GetConfiguration();
+	auto movieClip = args.GetMovie();
 
-    auto movieClip = args.GetMovie();
+	auto section = args[1].GetString();
+	auto ui = args[0].GetString();
 
-    RE::GFxValue response;
-    movieClip->CreateObject(&response);
+	YGGDRASIL::Container menu;
 
-    for(std::uint32_t i = 0; i < args.GetArgCount(); ++i) {
+	RE::GFxValue response;
+	movieClip->CreateObject(&response);
 
-        const auto& arg = args[i];
+	RE::GFxValue uiMenu;
+	movieClip->CreateObject(&uiMenu);
 
-        if(arg.GetType() != RE::GFxValue::ValueType::kString) continue;
+	response.SetMember(ui, uiMenu);
 
-        const char* sectionName = arg.GetString();
-        const CSimpleIniA::TKeyVal* keyValues = configuration.GetSection(sectionName);
+	if(std::strcmp(ui, "STARTMENU") == 0) {
 
-        if(keyValues != nullptr) {
+		if(std::strcmp(section, "MAINMENU") == 0) {
 
-            // RE::GFxValue sectionObject;
-            // movieClip->CreateObject(&sectionObject);
+			RE::GFxValue mainmenu;
+			movieClip->CreateArray(&mainmenu);
 
-            // response.SetMember(sectionName, sectionObject);
+			menu.addItem(YGGDRASIL::MenuItem(false, "Continue", std::nullopt, false, "YGUI_STARTMENU_MAIN_MENU_MENU_ITEM_CONTINUE"));
+			menu.addItem(YGGDRASIL::MenuItem(false, "New", std::nullopt, false, "YGUI_STARTMENU_MAIN_MENU_MENU_ITEM_NEW"));
+			menu.addItem(YGGDRASIL::MenuItem(false, "Load", std::nullopt, false, "YGUI_STARTMENU_MAIN_MENU_MENU_ITEM_LOAD"));
+			menu.addItem(YGGDRASIL::MenuItem(false, "Settings", std::nullopt, false, "YGUI_STARTMENU_MAIN_MENU_MENU_ITEM_SETTINGS"));
+			menu.addItem(YGGDRASIL::MenuItem(false, "Creation Club", std::nullopt, false, "YGUI_STARTMENU_MAIN_MENU_MENU_ITEM_CREATION_CLUB"));
+			menu.addItem(YGGDRASIL::MenuItem(false, "Credits", std::nullopt, false, "YGUI_STARTMENU_MAIN_MENU_MENU_ITEM_CREDITS"));
+			menu.addItem(YGGDRASIL::MenuItem(false, "Quit", std::nullopt, false, "YGUI_STARTMENU_MAIN_MENU_MENU_ITEM_QUIT"));
 
-            for(auto iterator = keyValues->begin(); iterator != keyValues->end(); ++iterator) {
+			for(size_t i = 0; i < menu.items.size(); ++i) { mainmenu.PushBack(YGGDRASIL::MenuItemToGFxValue(menu.items[i], movieClip)); };
 
-                RE::GFxValue key, value;
+			uiMenu.SetMember("MAINMENU", mainmenu);
 
-                key.SetString(iterator->first.pItem);
+		};
 
-                std::string raw = iterator->second;
+	};
 
-                if(raw == "true" || raw == "false") {
-
-                    value.SetBoolean(raw == "true");
-
-                } else if(std::all_of(raw.begin(), raw.end(), ::isdigit) || (raw.find('.') != std::string::npos && raw.find_first_not_of("0123456789.") == std::string::npos)) {
-
-                    if(raw.find('.') != std::string::npos) {
-
-                        value.SetNumber(std::stod(raw));
-
-                    } else {
-
-                        value.SetNumber(std::stoi(raw));
-
-                    };
-
-                } else {
-
-                    value.SetString(raw.c_str());
-
-                };
-
-                response.SetMember(key.GetString(), value);
-
-            };
-
-        };
-
-    };
-
-    movieClip->SetVariable("configuration", response);
+	movieClip->SetVariable("menus", response);
 
 };
 
@@ -98,20 +74,20 @@ void SharedMenuManager::SKSEGetConfiguration(const RE::FxDelegateArgs& args) {
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 void SharedMenuManager::SKSEGetVersions(const RE::FxDelegateArgs& args) {
 
-    LogManager::Log(LogManager::LogLevel::Debug, "Executing \"SKSEGetVersions\" from UI GameDelegate call", true);
+	LogManager::Log(LogManager::LogLevel::Debug, "Executing \"SKSEGetVersions\" from UI GameDelegate call", true);
 
-    SKSELog(args);
+	SKSELog(args);
 
-    auto movieClip = args.GetMovie();
+	auto movieClip = args.GetMovie();
 
-    RE::GFxValue response;
-    movieClip->CreateObject(&response);
+	RE::GFxValue response;
+	movieClip->CreateObject(&response);
 
-    response.SetMember("GAME", RE::GFxValue(YGGDRASIL::GetGlobal<std::string>(YGGDRASIL::Global::GAMEVersion)));
-    // response.SetMember("SKSE", RE::GFxValue(YGGDRASIL::GetGlobal<std::string>(YGGDRASIL::Global::SKSEVersion)));
-    response.SetMember("YGUI", RE::GFxValue(YGGDRASIL::GetGlobal<std::string>(YGGDRASIL::Global::YGUIVersion)));
+	response.SetMember("GAME", RE::GFxValue(YGGDRASIL::GetGlobal<std::string>(YGGDRASIL::Global::GAMEVersion)));
+	response.SetMember("SKSE", RE::GFxValue(YGGDRASIL::GetGlobal<std::string>(YGGDRASIL::Global::SKSEVersion)));
+	response.SetMember("YGUI", RE::GFxValue(YGGDRASIL::GetGlobal<std::string>(YGGDRASIL::Global::YGUIVersion)));
 
-    movieClip->SetVariable("versions", response);
+	movieClip->SetVariable("versions", response);
 
 };
 
@@ -120,21 +96,21 @@ void SharedMenuManager::SKSEGetVersions(const RE::FxDelegateArgs& args) {
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 void SharedMenuManager::SKSELog(const RE::FxDelegateArgs& args) {
 
-    LogManager::Log(LogManager::LogLevel::Debug, "Logging informations about received arguments..", false);
+	LogManager::Log(LogManager::LogLevel::Debug, "Logging informations about received arguments..", false);
 
-    if(args.GetArgCount() == 0) LogManager::Log(LogManager::LogLevel::Debug, std::format("No arguments received", args.GetArgCount()), false);
-    if(args.GetArgCount() == 1) LogManager::Log(LogManager::LogLevel::Debug, std::format("Received \"{}\" argument", args.GetArgCount()), false);
-    if(args.GetArgCount() > 1) LogManager::Log(LogManager::LogLevel::Debug, std::format("Received \"{}\" arguments", args.GetArgCount()), false);
+	if(args.GetArgCount() == 0) LogManager::Log(LogManager::LogLevel::Debug, std::format("No arguments received", args.GetArgCount()), false);
+	if(args.GetArgCount() == 1) LogManager::Log(LogManager::LogLevel::Debug, std::format("Received \"{}\" argument", args.GetArgCount()), false);
+	if(args.GetArgCount() > 1) LogManager::Log(LogManager::LogLevel::Debug, std::format("Received \"{}\" arguments", args.GetArgCount()), false);
 
-    for(std::uint32_t i = 0; i < args.GetArgCount(); ++i) {
+	for(std::uint32_t i = 0; i < args.GetArgCount(); ++i) {
 
-        const auto& arg = args[i];
+		const auto& arg = args[i];
 
-        SKSELogProcessArgument(arg, i, 0);
+		SKSELogProcessArgument(arg, i, 0);
 
-    };
+	};
 
-    LogManager::Log(LogManager::LogLevel::Debug, "Data successfully logged", true);
+	LogManager::Log(LogManager::LogLevel::Debug, "Data successfully logged", true);
 
 };
 
@@ -143,57 +119,57 @@ void SharedMenuManager::SKSELog(const RE::FxDelegateArgs& args) {
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 void SharedMenuManager::SKSELogProcessArgument(const RE::GFxValue& arg, std::uint32_t index, std::uint32_t depth) {
 
-    std::string indent(depth * 2, ' ');
+	std::string indent(depth * 2, ' ');
 
-    if(arg.IsString()) {
+	if(arg.IsString()) {
 
-        LogManager::Log(LogManager::LogLevel::Debug, std::format("{}Value of argument[{}] : (String) {}", indent, index, arg.GetString()), false);
+		LogManager::Log(LogManager::LogLevel::Debug, std::format("{}Value of argument[{}] : (String) {}", indent, index, arg.GetString()), false);
 
-    } else if(arg.IsNumber()) {
+	} else if(arg.IsNumber()) {
 
-        LogManager::Log(LogManager::LogLevel::Debug, std::format("{}Value of argument[{}] : (Number) {}", indent, index, arg.GetNumber()), false);
+		LogManager::Log(LogManager::LogLevel::Debug, std::format("{}Value of argument[{}] : (Number) {}", indent, index, arg.GetNumber()), false);
 
-    } else if(arg.IsBool()) {
+	} else if(arg.IsBool()) {
 
-        LogManager::Log(LogManager::LogLevel::Debug, std::format("{}Value of argument[{}] : (Boolean) {}", indent, index, arg.GetBool()), false);
+		LogManager::Log(LogManager::LogLevel::Debug, std::format("{}Value of argument[{}] : (Boolean) {}", indent, index, arg.GetBool()), false);
 
-    } else if(arg.IsNull()) {
+	} else if(arg.IsNull()) {
 
-        LogManager::Log(LogManager::LogLevel::Debug, std::format("{}Value of argument[{}] : (Null)", indent, index), false);
+		LogManager::Log(LogManager::LogLevel::Debug, std::format("{}Value of argument[{}] : (Null)", indent, index), false);
 
-    } else if(arg.IsUndefined()) {
+	} else if(arg.IsUndefined()) {
 
-        LogManager::Log(LogManager::LogLevel::Debug, std::format("{}Value of argument[{}] : (Undefined)", indent, index), false);
+		LogManager::Log(LogManager::LogLevel::Debug, std::format("{}Value of argument[{}] : (Undefined)", indent, index), false);
 
-    } else if(arg.IsArray()) {
+	} else if(arg.IsArray()) {
 
-        LogManager::Log(LogManager::LogLevel::Debug, std::format("{}Value of argument[{}] : (Array) [{}]", indent, index, arg.GetArraySize()), false);
+		LogManager::Log(LogManager::LogLevel::Debug, std::format("{}Value of argument[{}] : (Array) [{}]", indent, index, arg.GetArraySize()), false);
 
-        for(std::uint32_t j = 0; j < arg.GetArraySize(); ++j) {
+		for(std::uint32_t j = 0; j < arg.GetArraySize(); ++j) {
 
-            RE::GFxValue arrayElement;
+			RE::GFxValue arrayElement;
 
-            if(arg.GetElement(j, &arrayElement)) {
+			if(arg.GetElement(j, &arrayElement)) {
 
-                SKSELogProcessArgument(arrayElement, j, depth + 1);
+				SKSELogProcessArgument(arrayElement, j, depth + 1);
 
-            } else {
+			} else {
 
-                LogManager::Log(LogManager::LogLevel::Debug, std::format("{}  Failed to retrieve element [{}]", indent, j), false);
+				LogManager::Log(LogManager::LogLevel::Debug, std::format("{}  Failed to retrieve element [{}]", indent, j), false);
 
-            }
+			};
 
-        };
+		};
 
-    } else if(arg.IsObject()) {
+	} else if(arg.IsObject()) {
 
-        LogManager::Log(LogManager::LogLevel::Debug, std::format("{}Value of argument[{}] : (Object)", indent, index), false);
+		LogManager::Log(LogManager::LogLevel::Debug, std::format("{}Value of argument[{}] : (Object)", indent, index), false);
 
-    } else {
+	} else {
 
-        LogManager::Log(LogManager::LogLevel::Debug, std::format("{}Value of argument[{}] : (Unknown Type)", indent, index), false);
+		LogManager::Log(LogManager::LogLevel::Debug, std::format("{}Value of argument[{}] : (Unknown Type)", indent, index), false);
 
-    };
+	};
 
 };
 
@@ -202,15 +178,15 @@ void SharedMenuManager::SKSELogProcessArgument(const RE::GFxValue& arg, std::uin
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 void SharedMenuManager::SKSEQuitGame(const RE::FxDelegateArgs& args) {
 
-    LogManager::Log(LogManager::LogLevel::Debug, "Executing \"SKSEQuitGame\" from UI GameDelegate call", true);
+	LogManager::Log(LogManager::LogLevel::Debug, "Executing \"SKSEQuitGame\" from UI GameDelegate call", true);
 
-    SKSELog(args);
+	SKSELog(args);
 
-    SFXManager::GetSingleton().CleanUp();
+	SFXManager::GetSingleton().CleanUp();
 
-    auto main = RE::Main::GetSingleton();
+	auto main = RE::Main::GetSingleton();
 
-    if(main) main->quitGame = true;
+	if(main) main->quitGame = true;
 
 };
 
@@ -219,9 +195,9 @@ void SharedMenuManager::SKSEQuitGame(const RE::FxDelegateArgs& args) {
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 void SharedMenuManager::UIEndState(const RE::FxDelegateArgs& args) {
 
-    LogManager::Log(LogManager::LogLevel::Debug, "Executing \"UIEndState\" from UI GameDelegate call", true);
+	LogManager::Log(LogManager::LogLevel::Debug, "Executing \"UIEndState\" from UI GameDelegate call", true);
 
-    SKSELog(args);
+	SKSELog(args);
 
 };
 
@@ -230,16 +206,16 @@ void SharedMenuManager::UIEndState(const RE::FxDelegateArgs& args) {
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 void SharedMenuManager::UIPlaySound(const RE::FxDelegateArgs& args) {
 
-    LogManager::Log(LogManager::LogLevel::Debug, "Executing \"UIPlaySound\" from UI GameDelegate call", true);
+	LogManager::Log(LogManager::LogLevel::Debug, "Executing \"UIPlaySound\" from UI GameDelegate call", true);
 
-    SKSELog(args);
+	SKSELog(args);
 
-    std::string pathToUISoundFX = YGGDRASIL::GetGlobal<const char*>(YGGDRASIL::Global::PathToUISoundFX);
-    std::string pathToUISoundFXFile = std::format("{}\\{}.wav", pathToUISoundFX, args[0].GetString());
+	std::string pathToUISoundFX = YGGDRASIL::GetGlobal<const char*>(YGGDRASIL::Global::PathToUISoundFX);
+	std::string pathToUISoundFXFile = std::format("{}\\{}.wav", pathToUISoundFX, args[0].GetString());
 
-    SFXManager::GetSingleton().QueueSFX(pathToUISoundFXFile);
+	SFXManager::GetSingleton().QueueSFX(pathToUISoundFXFile);
 
-    LogManager::Log(LogManager::LogLevel::Info, std::format("Played SFX : \"{}\"", pathToUISoundFXFile), true);
+	LogManager::Log(LogManager::LogLevel::Info, std::format("Played SFX : \"{}\"", pathToUISoundFXFile), true);
 
 };
 
@@ -248,8 +224,8 @@ void SharedMenuManager::UIPlaySound(const RE::FxDelegateArgs& args) {
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 void SharedMenuManager::UIStartState(const RE::FxDelegateArgs& args) {
 
-    LogManager::Log(LogManager::LogLevel::Debug, "Executing \"UIStartState\" from UI GameDelegate call", true);
+	LogManager::Log(LogManager::LogLevel::Debug, "Executing \"UIStartState\" from UI GameDelegate call", true);
 
-    SKSELog(args);
+	SKSELog(args);
 
 };

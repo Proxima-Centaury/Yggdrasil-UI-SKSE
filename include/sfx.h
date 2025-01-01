@@ -4,6 +4,8 @@ class SFXManager {
 
     public :
 
+        ~SFXManager();
+
         static SFXManager& GetSingleton() {
 
             static SFXManager instance;
@@ -14,11 +16,11 @@ class SFXManager {
         void QueueSFX(const std::string& filePath);
         void CleanUp();
 
-        ~SFXManager();
-
     private :
 
         SFXManager();
+        SFXManager(const SFXManager&) = delete;
+        SFXManager& operator=(const SFXManager&) = delete;
 
         ALCdevice* device;
         ALCcontext* context;
@@ -32,8 +34,5 @@ class SFXManager {
 
         void PlaySound(const std::string& filePath);
         void WorkerThread();
-
-        SFXManager(const SFXManager&) = delete;
-        SFXManager& operator=(const SFXManager&) = delete;
 
 };

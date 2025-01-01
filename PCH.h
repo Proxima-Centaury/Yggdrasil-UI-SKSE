@@ -1,18 +1,27 @@
 #pragma once
 
 #include <algorithm>
-#include <windows.h>
-#include <shlobj.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <thread>
-#include <atomic>
-#include <iostream>
-#include <vector>
-#include <unordered_map>
 #include <any>
+#include <atomic>
+#include <codecvt>
+#include <filesystem>
+#include <fstream>
+#include <iostream>
+#include <locale>
+#include <optional>
+#include <shlobj.h>
+#include <sstream>
+#include <stdio.h>
+#include <stdlib.h>
+#include <thread>
+#include <unordered_map>
+#include <unordered_set>
+#include <vector>
+#include <windows.h>
 
 #include "dependencies/SimpleINI/SimpleIni.h" // Dependency : manual integration
+
+#include "dependencies/SimpleINI/SimpleIni.h"
 
 #include "RE/Skyrim.h" // Dependency : vcpkg integration
 #include "SKSE/SKSE.h" // Dependency : vcpkg integration
@@ -24,6 +33,8 @@
 
 #include "include/configuration.h"
 #include "include/log.h"
+#include "include/sfx.h"
+#include "include/translations.h"
 #include "include/ui.h"
 #include "include/sfx.h"
 
