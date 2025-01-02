@@ -5,47 +5,32 @@
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 TranslationsManager::Languages TranslationsManager::GetCurrentGameLanguage() {
 
-    const char* currentPlatform = YGGDRASIL::GetGlobal<const char*>(YGGDRASIL::Global::CurrentPlatform);
+	const char* currentPlatform = YGGDRASIL::GetGlobal<const char*>(YGGDRASIL::Global::CurrentPlatform);
 
-    std::string pathToSkyrimINIFile = std::format("{}\\{}\\Skyrim.ini", YGGDRASIL::GetGlobal<std::string>(YGGDRASIL::Global::PathToMyGames), currentPlatform);
+	std::string pathToSkyrimINIFile = std::format("{}\\{}\\Skyrim.ini", YGGDRASIL::GetGlobal<std::string>(YGGDRASIL::Global::PathToMyGames), currentPlatform);
 
-    LogManager::Log(LogManager::LogLevel::Info, std::format("Getting \"Skyrim.ini\" file for language detection : \"{}\"", pathToSkyrimINIFile), false);
+	LogManager::Log(LogManager::LogLevel::Info, std::format("Getting \"Skyrim.ini\" file for language detection : \"{}\"", pathToSkyrimINIFile), false);
 
-    CSimpleIniA ini;
-    ini.SetUnicode();
+	CSimpleIniA ini;
+	ini.SetUnicode();
 
-    SI_Error rc = ini.LoadFile(pathToSkyrimINIFile.c_str());
+	SI_Error rc = ini.LoadFile(pathToSkyrimINIFile.c_str());
 
-    if(rc != SI_OK) {
+	if(rc != SI_OK) {
 
-        LogManager::Log(LogManager::LogLevel::Error, std::format("Unable to find \"Skyrim.ini\" file in : \"{}\"", pathToSkyrimINIFile), false);
-        LogManager::Log(LogManager::LogLevel::Error, "Message : Setting fallback translations to \"English\"", true);
-        return Languages::English;
+		LogManager::Log(LogManager::LogLevel::Error, std::format("Unable to find \"Skyrim.ini\" file in : \"{}\"", pathToSkyrimINIFile), false);
+		LogManager::Log(LogManager::LogLevel::Error, "Message : Setting fallback translations to \"English\"", true);
+		return Languages::English;
 
-    };
+	};
 
-    const char* language = ini.GetValue("General", "sLanguage", "ENGLISH");
+	const char* language = ini.GetValue("General", "sLanguage", "ENGLISH");
 
-    auto iterator = languageMap.find(language);
+	auto iterator = languageMap.find(language);
 
-    if(iterator != languageMap.end()) { return iterator->second; };
+	if(iterator != languageMap.end()) { return iterator->second; };
 
-    return Languages::English;
-
-};
-
-// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
-// GETS FILE NAME ACCORDING TO GAME LANGUAGE
-// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
-std::string TranslationsManager::GetSkyrimTranslationsFileName() {
-
-    Languages currentLanguage = GetCurrentGameLanguage();
-
-    auto iterator = languageFiles.find(currentLanguage);
-
-    if(iterator != languageFiles.end()) { return iterator->second; };
-
-    return "translate_english.txt";
+	return Languages::English;
 
 };
 
@@ -54,155 +39,76 @@ std::string TranslationsManager::GetSkyrimTranslationsFileName() {
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 bool TranslationsManager::Init() {
 
-    std::string skyrimTranslationsFileName = GetSkyrimTranslationsFileName();
+	TranslationsManager::Languages currentLocale = GetCurrentGameLanguage();
 
-    if(skyrimTranslationsFileName.starts_with("translate_") && skyrimTranslationsFileName.ends_with(".txt")) {
+	switch(currentLocale) {
 
-        const std::string language = skyrimTranslationsFileName.substr(10, skyrimTranslationsFileName.size() - 14);
+		case TranslationsManager::Languages::Chinese : {
 
-        LogManager::Log(LogManager::LogLevel::Info, std::format("Getting \"{}\" vanilla translation file", skyrimTranslationsFileName), false);
-        LogManager::Log(LogManager::LogLevel::Info, std::format("Extracting language from file name : \"{}\"", language), false);
+			YGGDRASIL::SetGlobal(YGGDRASIL::Global::CurrentLocale, "chinese");
+			LogManager::Log(LogManager::LogLevel::Info, std::format("Detected language : \"{}\"", YGGDRASIL::GetGlobal<const char *>(YGGDRASIL::Global::CurrentLocale)), false);
+			return true;
 
-        const std::string customTranslationsFilePath = std::format("{}\\{}.txt", YGGDRASIL::GetGlobal<const char*>(YGGDRASIL::Global::PathToUITranslationsFiles), language);
+		};
 
-        LogManager::Log(LogManager::LogLevel::Info, std::format("Reading \"Yggdrasil UI\" translations from : \"{}\"", customTranslationsFilePath), false);
+		case TranslationsManager::Languages::English : {
 
-        if(fs::exists(customTranslationsFilePath) && ReadTranslationsFile(customTranslationsFilePath)) {
+			YGGDRASIL::SetGlobal(YGGDRASIL::Global::CurrentLocale, "english");
+			LogManager::Log(LogManager::LogLevel::Info, std::format("Detected language : \"{}\"", YGGDRASIL::GetGlobal<const char *>(YGGDRASIL::Global::CurrentLocale)), false);
+			return true;
 
-            return WriteInTranslationsFile(skyrimTranslationsFileName);
+		};
 
-        };
+		case TranslationsManager::Languages::French : {
 
-        return false;
+			YGGDRASIL::SetGlobal(YGGDRASIL::Global::CurrentLocale, "french");
+			LogManager::Log(LogManager::LogLevel::Info, std::format("Detected language : \"{}\"", YGGDRASIL::GetGlobal<const char *>(YGGDRASIL::Global::CurrentLocale)), false);
+			return true;
 
-    };
+		};
 
-    return false;
+		case TranslationsManager::Languages::German : {
 
-};
+			YGGDRASIL::SetGlobal(YGGDRASIL::Global::CurrentLocale, "german");
+			LogManager::Log(LogManager::LogLevel::Info, std::format("Detected language : \"{}\"", YGGDRASIL::GetGlobal<const char *>(YGGDRASIL::Global::CurrentLocale)), false);
+			return true;
 
-// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
-// READS EXISTING TRANSLATION KEYS FROM VANILLA GAME TRANSLATIONS FILE
-// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
-bool TranslationsManager::ReadExistingTranslationKeys(const std::string& filePath) {
+		};
 
-    std::wifstream file(filePath, std::ios::binary);
+		case TranslationsManager::Languages::Italian : {
 
-    if(!file.is_open()) {
+			YGGDRASIL::SetGlobal(YGGDRASIL::Global::CurrentLocale, "italian");
+			LogManager::Log(LogManager::LogLevel::Info, std::format("Detected language : \"{}\"", YGGDRASIL::GetGlobal<const char *>(YGGDRASIL::Global::CurrentLocale)), false);
+			return true;
 
-        LogManager::Log(LogManager::LogLevel::Error, std::format("Failed to open translation file : \"{}\"", filePath), true);
-        return false;
+		};
 
-    };
+		case TranslationsManager::Languages::Japanese : {
 
-    file.imbue(std::locale(file.getloc(), new std::codecvt_utf16<wchar_t, 0x10FFFF, std::little_endian>));
+			YGGDRASIL::SetGlobal(YGGDRASIL::Global::CurrentLocale, "japanese");
+			LogManager::Log(LogManager::LogLevel::Info, std::format("Detected language : \"{}\"", YGGDRASIL::GetGlobal<const char *>(YGGDRASIL::Global::CurrentLocale)), false);
+			return true;
 
-    std::wstring line;
+		};
 
-    while(std::getline(file, line)) {
+		case TranslationsManager::Languages::Polish : {
 
-        size_t separatorPosition = line.find(L'\t');
+			YGGDRASIL::SetGlobal(YGGDRASIL::Global::CurrentLocale, "polish");
+			LogManager::Log(LogManager::LogLevel::Info, std::format("Detected language : \"{}\"", YGGDRASIL::GetGlobal<const char *>(YGGDRASIL::Global::CurrentLocale)), false);
+			return true;
 
-        if(separatorPosition != std::string::npos) {
+		};
 
-            std::wstring wideKey = line.substr(0, separatorPosition);
+		case TranslationsManager::Languages::Russian : {
 
-            std::string key = YGGDRASIL::UTF16ToUTF8(wideKey);
+			YGGDRASIL::SetGlobal(YGGDRASIL::Global::CurrentLocale, "russian");
+			LogManager::Log(LogManager::LogLevel::Info, std::format("Detected language : \"{}\"", YGGDRASIL::GetGlobal<const char *>(YGGDRASIL::Global::CurrentLocale)), false);
+			return true;
 
-            existingKeys.insert(key);
+		};
 
-        };
+	};
 
-    };
-
-    file.close();
-    return true;
-
-};
-
-// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
-// READS TRANSLATIONs FILE
-// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
-bool TranslationsManager::ReadTranslationsFile(const std::string& filePath) {
-
-    std::ifstream file(filePath);
-
-    if(!file.is_open()) {
-
-        LogManager::Log(LogManager::LogLevel::Error, std::format("Failed to open translation file : \"{}\"", filePath), true);
-        return false;
-
-    };
-
-    std::string line;
-
-    while(std::getline(file, line)) {
-
-        size_t separatorPosition = line.find("=");
-
-        if(separatorPosition != std::string::npos) {
-
-            std::string key = line.substr(0, separatorPosition);
-            std::string value = line.substr(separatorPosition + 1);
-
-            YGGDRASIL::TrimLeadingSpaces(key);
-            YGGDRASIL::TrimLeadingSpaces(value);
-
-            translations[key] = value;
-
-        };
-
-    };
-
-    file.close();
-    return true;
-
-};
-
-// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
-// WRITES IN BASE GAME'S TRANSLATIONs FILE
-// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
-bool TranslationsManager::WriteInTranslationsFile(const std::string& skyrimTranslationsFileName) {
-
-    std::string skyrimTranslationsFilePath = std::format("{}\\{}", YGGDRASIL::GetGlobal<const char *>(YGGDRASIL::Global::PathToSkyrimInterface), skyrimTranslationsFileName);
-
-    // ReadExistingTranslationKeys(skyrimTranslationsFilePath);
-
-    // Append mode
-    // std::ofstream file(skyrimTranslationsFilePath, std::ios::binary | std::ios::app);
-    // Rewrite mode
-    std::ofstream file(skyrimTranslationsFilePath, std::ios::binary | std::ios::trunc);
-
-    if(!file.is_open()) {
-
-        LogManager::Log(LogManager::LogLevel::Error, std::format("Failed to open translation file : \"{}\"", skyrimTranslationsFilePath), true);
-        return false;
-
-    };
-
-    for(const auto& [key, value] : translations) {
-
-        std::wstring wideKey = YGGDRASIL::UTF8ToUTF16(key);
-        std::wstring wideValue = YGGDRASIL::UTF8ToUTF16(value);
-
-        // if(existingKeys.find(key) != existingKeys.end()) continue;
-
-        file.write(reinterpret_cast<const char*>(wideKey.c_str()), wideKey.size() * sizeof(wchar_t));
-
-        wchar_t separator = L'\t';
-
-        file.write(reinterpret_cast<const char*>(&separator), sizeof(wchar_t));
-        file.write(reinterpret_cast<const char*>(wideValue.c_str()), wideValue.size() * sizeof(wchar_t));
-
-        wchar_t newline[] = L"\r\n";
-
-        file.write(reinterpret_cast<const char*>(newline), 2 * sizeof(wchar_t));
-
-    };
-
-    LogManager::Log(LogManager::LogLevel::Info, std::format("Successfully added \"Yggdrasil UI\" translations to : \"{}\"", skyrimTranslationsFilePath), true);
-
-    file.close();
-    return true;
+	return false;
 
 };

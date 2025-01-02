@@ -50,7 +50,7 @@ void SharedMenuManager::SKSEGetMenu(const RE::FxDelegateArgs& args) {
 			movieClip->CreateArray(&mainmenu);
 
 			menu.addItem(YGGDRASIL::MenuItem(false, "Continue", std::nullopt, false, "$YGUI_STARTMENU_MAIN_MENU_MENU_ITEM_CONTINUE"));
-			menu.addItem(YGGDRASIL::MenuItem(false, "New", std::nullopt, false, "$YGUI_STARTMENU_MAIN_MENU_MENU_ITEM_NEW"));
+			menu.addItem(YGGDRASIL::MenuItem(false, "New", std::nullopt, true, "$YGUI_STARTMENU_MAIN_MENU_MENU_ITEM_NEW"));
 			menu.addItem(YGGDRASIL::MenuItem(false, "Load", std::nullopt, false, "$YGUI_STARTMENU_MAIN_MENU_MENU_ITEM_LOAD"));
 			menu.addItem(YGGDRASIL::MenuItem(false, "Settings", std::nullopt, false, "$YGUI_STARTMENU_MAIN_MENU_MENU_ITEM_SETTINGS"));
 			menu.addItem(YGGDRASIL::MenuItem(false, "Creation Club", std::nullopt, false, "$YGUI_STARTMENU_MAIN_MENU_MENU_ITEM_CREATION_CLUB"));

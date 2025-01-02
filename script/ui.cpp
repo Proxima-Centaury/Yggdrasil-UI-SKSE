@@ -5,22 +5,22 @@
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 RE::BSEventNotifyControl UIManager::ProcessEvent(const RE::MenuOpenCloseEvent* event, RE::BSTEventSource<RE::MenuOpenCloseEvent>*) {
 
-    std::string menuName = event->menuName.c_str();
+	std::string menuName = event->menuName.c_str();
 
-    LogManager::Log(LogManager::LogLevel::Info, std::format("\"{}\" is opening : {}", menuName, event->opening), false);
-    LogManager::Log(LogManager::LogLevel::Info, std::format("\"{}\" is closing : {}", menuName, !event->opening), true);
+	LogManager::Log(LogManager::LogLevel::Info, std::format("\"{}\" is opening : {}", menuName, event->opening), false);
+	LogManager::Log(LogManager::LogLevel::Info, std::format("\"{}\" is closing : {}", menuName, !event->opening), true);
 
-    if(event->opening) {
+	if(event->opening) {
 
-        if(YGGDRASIL::IsMenuHandled(menuName)) RegisterFxDelegateCallbacks(menuName);
+		if(YGGDRASIL::IsMenuHandled(menuName)) RegisterFxDelegateCallbacks(menuName);
 
-    } else {
+	} else {
 
-        if(YGGDRASIL::IsMenuHandled(menuName)) UnregisterFxDelegateCallbacks(menuName);
+		if(YGGDRASIL::IsMenuHandled(menuName)) UnregisterFxDelegateCallbacks(menuName);
 
-    };
+	};
 
-    return RE::BSEventNotifyControl::kContinue;
+	return RE::BSEventNotifyControl::kContinue;
 
 };
 
@@ -29,48 +29,68 @@ RE::BSEventNotifyControl UIManager::ProcessEvent(const RE::MenuOpenCloseEvent* e
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 bool UIManager::RegisterFxDelegateCallbacks(std::string menuName) {
 
-    auto menu = RE::UI::GetSingleton()->GetMenu(menuName);
-    auto movieClip = menu->uiMovie;
+	auto menu = RE::UI::GetSingleton()->GetMenu(menuName);
+	auto movieClip = menu->uiMovie.get();
 
-    GameDelegate = new RE::FxDelegate();
+	GameDelegate = new RE::FxDelegate();
 
-    SharedMenuManager sharedMenuManager;
+	SharedMenuManager sharedMenuManager;
 
-    if(movieClip) {
+	if(movieClip) {
 
-        RE::GFxValue movieClipName;
+		RE::GFxValue movieClipName;
+		movieClip->GetVariable(&movieClipName, "_name");
 
-        movieClip->GetVariable(&movieClipName, "_name");
+		LogManager::Log(LogManager::LogLevel::Info, std::format("\"{}\" MovieClip found in \"{}\"", movieClipName.GetString(), menuName), true);
 
-        LogManager::Log(LogManager::LogLevel::Info, std::format("\"{}\" MovieClip found in \"{}\"", movieClipName.GetString(), menuName), true);
+		movieClip->SetState(RE::GFxState::StateType::kExternalInterface, GameDelegate);
 
-        movieClip->SetState(RE::GFxState::StateType::kExternalInterface, GameDelegate);
+		GameDelegate->RegisterHandler(&sharedMenuManager);
+		
+		bool areCallbacksRegistered = !GameDelegate->callbacks.IsEmpty();
 
-        GameDelegate->RegisterHandler(&sharedMenuManager);
-        
-        bool areCallbacksRegistered = !GameDelegate->callbacks.IsEmpty();
+		if(menuName == "Main Menu" && areCallbacksRegistered) {
 
-        if(menuName == "Main Menu" && areCallbacksRegistered) {
+			RE::GFxValue locale;
+			movieClip->CreateString(&locale, YGGDRASIL::GetGlobal<const char *>(YGGDRASIL::Global::CurrentLocale));
 
-            LogManager::Log(LogManager::LogLevel::Info, std::format("Is \"GameDelegate\" callback list for \"{}\" empty : {}", menuName, !areCallbacksRegistered), false);
-            LogManager::Log(LogManager::LogLevel::Info, std::format("\"{}\" callbacks registered", menuName), true);
-            return true;
+			movieClip->SetVariable("SKSEGameLocale", locale);
 
-        } else {
+			LogManager::Log(LogManager::LogLevel::Info, std::format("Setting SKSEGameLocale variable in \"{}\"", movieClipName.GetString()), false);
 
-            LogManager::Log(LogManager::LogLevel::Warn, std::format("Failed to register callbacks for \"{}\"", menuName), false);
-            LogManager::Log(LogManager::LogLevel::Warn, std::format("May be due to : \"Possibly no callbacks to register\"", menuName), false);
-            LogManager::Log(LogManager::LogLevel::Warn, std::format("May be due to : \"Menu callbacks registration possibly faced unhandled issue\"", menuName), true);
-            return false;
+			RE::GFxValue SKSEGameLocale;
+			movieClip->GetVariable(&SKSEGameLocale, "SKSEGameLocale");
 
-        };
+			LogManager::Log(LogManager::LogLevel::Info, std::format("Checking SKSEGameLocale value : \"{}\"", SKSEGameLocale.GetString()), true);
 
-    } else {
+			movieClip->SetVariable("SKSEHasLoaded", true);
 
-        LogManager::Log(LogManager::LogLevel::Warn, std::format("No MovieClip found in \"{}\"", menuName), true);
-        return false;
+			LogManager::Log(LogManager::LogLevel::Info, std::format("Setting SKSEHasLoaded variable in \"{}\"", movieClipName.GetString()), false);
 
-    };
+			RE::GFxValue SKSEHasLoaded;
+			movieClip->GetVariable(&SKSEHasLoaded, "SKSEHasLoaded");
+
+			LogManager::Log(LogManager::LogLevel::Info, std::format("Checking SKSEHasLoaded value : {}", SKSEHasLoaded.GetBool()), true);
+
+			LogManager::Log(LogManager::LogLevel::Info, std::format("Is \"GameDelegate\" callback list for \"{}\" empty : {}", menuName, !areCallbacksRegistered), false);
+			LogManager::Log(LogManager::LogLevel::Info, std::format("\"{}\" callbacks registered", menuName), true);
+			return true;
+
+		} else {
+
+			LogManager::Log(LogManager::LogLevel::Warn, std::format("Failed to register callbacks for \"{}\"", menuName), false);
+			LogManager::Log(LogManager::LogLevel::Warn, std::format("May be due to : \"Possibly no callbacks to register\"", menuName), false);
+			LogManager::Log(LogManager::LogLevel::Warn, std::format("May be due to : \"Menu callbacks registration possibly faced unhandled issue\"", menuName), true);
+			return false;
+
+		};
+
+	} else {
+
+		LogManager::Log(LogManager::LogLevel::Warn, std::format("No MovieClip found in \"{}\"", menuName), true);
+		return false;
+
+	};
 
 };
 
@@ -79,24 +99,24 @@ bool UIManager::RegisterFxDelegateCallbacks(std::string menuName) {
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 bool UIManager::UnregisterFxDelegateCallbacks(std::string menuName) {
 
-    SharedMenuManager sharedMenuManager;
+	SharedMenuManager sharedMenuManager;
 
-    GameDelegate->UnregisterHandler(&sharedMenuManager);
+	GameDelegate->UnregisterHandler(&sharedMenuManager);
 
-    bool areCallbacksUnregistered = GameDelegate->callbacks.IsEmpty();
+	bool areCallbacksUnregistered = GameDelegate->callbacks.IsEmpty();
 
-    if(areCallbacksUnregistered) {
+	if(areCallbacksUnregistered) {
 
-        LogManager::Log(LogManager::LogLevel::Info, std::format("{} callbacks unregistered", menuName), true);
-        return true;
+		LogManager::Log(LogManager::LogLevel::Info, std::format("{} callbacks unregistered", menuName), true);
+		return true;
 
-    } else {
+	} else {
 
-        LogManager::Log(LogManager::LogLevel::Warn, std::format("Failed to unregister callbacks for {}", menuName), false);
-        LogManager::Log(LogManager::LogLevel::Warn, std::format("May be due to : \"Possibly no callbacks to unregister\"", menuName), false);
-        LogManager::Log(LogManager::LogLevel::Warn, std::format("May be due to : \"Menu callbacks registration possibly faced unhandled issue\"", menuName), true);
-        return false;
+		LogManager::Log(LogManager::LogLevel::Warn, std::format("Failed to unregister callbacks for {}", menuName), false);
+		LogManager::Log(LogManager::LogLevel::Warn, std::format("May be due to : \"Possibly no callbacks to unregister\"", menuName), false);
+		LogManager::Log(LogManager::LogLevel::Warn, std::format("May be due to : \"Menu callbacks registration possibly faced unhandled issue\"", menuName), true);
+		return false;
 
-    };
+	};
 
 };
