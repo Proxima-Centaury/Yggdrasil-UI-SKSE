@@ -178,6 +178,7 @@ namespace YGGDRASIL {
 				break;
 
 			};
+
 		};
 
 		LogManager::Log(LogManager::LogLevel::Info, std::format("\"{}\" sending message type {}", sender, type), false);

@@ -19,6 +19,7 @@ namespace YGGDRASIL {
 
 	enum class Global {
 
+		CurrentLocale,
 		CurrentPlatform,
 		GAMEVersion,
 		Menus,
