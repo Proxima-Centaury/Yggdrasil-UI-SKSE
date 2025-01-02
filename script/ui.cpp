@@ -49,12 +49,9 @@ bool UIManager::RegisterFxDelegateCallbacks(std::string menuName) {
 		
 		bool areCallbacksRegistered = !GameDelegate->callbacks.IsEmpty();
 
-		if(menuName == "Main Menu" && areCallbacksRegistered) {
+		if(areCallbacksRegistered) {
 
-			RE::GFxValue locale;
-			movieClip->CreateString(&locale, YGGDRASIL::GetGlobal<const char *>(YGGDRASIL::Global::CurrentLocale));
-
-			movieClip->SetVariable("SKSEGameLocale", locale);
+			movieClip->SetVariable("SKSEGameLocale", YGGDRASIL::GetGlobal<const char *>(YGGDRASIL::Global::CurrentLocale));
 
 			LogManager::Log(LogManager::LogLevel::Info, std::format("Setting SKSEGameLocale variable in \"{}\"", movieClipName.GetString()), false);
 
@@ -72,11 +69,29 @@ bool UIManager::RegisterFxDelegateCallbacks(std::string menuName) {
 
 			LogManager::Log(LogManager::LogLevel::Info, std::format("Checking SKSEHasLoaded value : {}", SKSEHasLoaded.GetBool()), true);
 
+			movieClip->SetVariable("UIDelegateHandler", "External");
+
+			LogManager::Log(LogManager::LogLevel::Info, std::format("Setting UIDelegateHandler variable in \"{}\"", movieClipName.GetString()), false);
+
+			RE::GFxValue UIDelegateHandler;
+			movieClip->GetVariable(&UIDelegateHandler, "UIDelegateHandler");
+
+			LogManager::Log(LogManager::LogLevel::Info, std::format("Checking UIDelegateHandler value : \"{}\"", UIDelegateHandler.GetString()), true);
+
 			LogManager::Log(LogManager::LogLevel::Info, std::format("Is \"GameDelegate\" callback list for \"{}\" empty : {}", menuName, !areCallbacksRegistered), false);
-			LogManager::Log(LogManager::LogLevel::Info, std::format("\"{}\" callbacks registered", menuName), true);
+			LogManager::Log(LogManager::LogLevel::Info, std::format("Callbacks for \"{}\" successfully registered", menuName), true);
 			return true;
 
 		} else {
+
+			movieClip->SetVariable("UIDelegateHandler", "Internal");
+
+			LogManager::Log(LogManager::LogLevel::Info, std::format("Setting UIDelegateHandler variable in \"{}\"", movieClipName.GetString()), false);
+
+			RE::GFxValue UIDelegateHandler;
+			movieClip->GetVariable(&UIDelegateHandler, "UIDelegateHandler");
+
+			LogManager::Log(LogManager::LogLevel::Info, std::format("Checking UIDelegateHandler value : \"{}\"", UIDelegateHandler.GetString()), true);
 
 			LogManager::Log(LogManager::LogLevel::Warn, std::format("Failed to register callbacks for \"{}\"", menuName), false);
 			LogManager::Log(LogManager::LogLevel::Warn, std::format("May be due to : \"Possibly no callbacks to register\"", menuName), false);
