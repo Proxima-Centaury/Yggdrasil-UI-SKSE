@@ -1,24 +1,6 @@
 #include "../include/yggdrasil.h"
 
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
-// DEFINES ENVIRONMENT
-// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
-void SharedMenuManager::SKSEDefineEnvironment(const RE::FxDelegateArgs& args) {
-
-	LogManager::Log(LogManager::LogLevel::Debug, "Executing \"SKSEDefineEnvironment\" from UI GameDelegate call", true);
-
-	SKSELog(args);
-
-	auto movieClip = args.GetMovie();
-
-	RE::GFxValue response;
-	movieClip->CreateObject(&response);
-
-	movieClip->SetVariable("environment", "Skyrim SKSE");
-
-};
-
-// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 // RETURNS MENU ITEMS FOR SPECIFIC MENU
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 void SharedMenuManager::SKSEGetMenu(const RE::FxDelegateArgs& args) {

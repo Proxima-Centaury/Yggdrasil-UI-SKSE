@@ -8,7 +8,6 @@ class SharedMenuManager : public RE::FxDelegateHandler {
 
 			LogManager::Log(LogManager::LogLevel::Debug, "Running \"SharedMenuManager::Accept\"", true);
 
-			processor->Process("SKSEDefineEnvironment", SharedMenuManager::SKSEDefineEnvironment);
 			processor->Process("SKSEGetMenu", SharedMenuManager::SKSEGetMenu);
 			processor->Process("SKSEGetVersions", SharedMenuManager::SKSEGetVersions);
 			processor->Process("SKSELog", SharedMenuManager::SKSELog);
@@ -20,7 +19,6 @@ class SharedMenuManager : public RE::FxDelegateHandler {
 
 		};
 
-		static void SKSEDefineEnvironment(const RE::FxDelegateArgs& args);
 		static void SKSEGetMenu(const RE::FxDelegateArgs& args);
 		static void SKSEGetVersions(const RE::FxDelegateArgs& args);
 		static void SKSELog(const RE::FxDelegateArgs& args);
