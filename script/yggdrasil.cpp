@@ -2,15 +2,19 @@
 
 std::unordered_map<YGGDRASIL::Global, std::any> globalVariables;
 
+bool dataLoaded = false;
+bool initialGlobalsLoaded;
+bool inputLoaded = false;
+
 namespace YGGDRASIL {
 
 	// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 	// FINDS WHICH SKYRIM VERSION TO USE ( GOG / STEAM )
 	// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
-	bool FindPlatform(const char* platform) {
+	bool FindGamePlatform(const char* gamePlatform) {
 
 		std::string pathToMyGames = GetGlobal<std::string>(Global::PathToMyGames);
-		std::string platformFolderPath = std::format("{}\\{}\\SKSE", pathToMyGames, platform);
+		std::string platformFolderPath = std::format("{}\\{}\\SKSE", pathToMyGames, gamePlatform);
 
 		if(!fs::exists(platformFolderPath)) return false;
 		if(!fs::is_directory(platformFolderPath)) return false;
@@ -23,20 +27,26 @@ namespace YGGDRASIL {
 	// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 	// TRIGGERS MANAGERS INITIALIZATION
 	// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
-	bool Init(Manager manager) {
+	bool Initialize(Manager manager) {
 
-		SetGlobal(Global::PathToBackgrounds, "Data\\Interface\\Yggdrasil UI\\Backgrounds");
-		SetGlobal(Global::PathToSKSEPlugins, "Data\\SKSE\\Plugins");
-		SetGlobal(Global::PathToSkyrimInterface, "Data\\Interface");
-		SetGlobal(Global::PathToUISoundFX, "Data\\Interface\\Yggdrasil UI\\SFX");
-		SetGlobal(Global::PathToUITranslationsFiles, "Data\\Interface\\Yggdrasil UI\\Translations");
-		SetGlobal(Global::PluginName, "Yggdrasil UI");
-		SetGlobal(Global::SkyrimGOG, "Skyrim Special Edition GOG");
-		SetGlobal(Global::SkyrimSteam, "Skyrim Special Edition");
+		if(!initialGlobalsLoaded) {
 
-		std::vector<std::string> menus = { "Main Menu" };
+			SetGlobal(Global::PathToBackgrounds, "Data\\Interface\\Yggdrasil UI\\Backgrounds");
+			SetGlobal(Global::PathToSKSEPlugins, "Data\\SKSE\\Plugins");
+			SetGlobal(Global::PathToSkyrimInterface, "Data\\Interface");
+			SetGlobal(Global::PathToUISoundFX, "Data\\Interface\\Yggdrasil UI\\SFX");
+			SetGlobal(Global::PathToUITranslationsFiles, "Data\\Interface\\Yggdrasil UI\\Translations");
+			SetGlobal(Global::PluginName, "Yggdrasil UI");
+			SetGlobal(Global::SkyrimGOG, "Skyrim Special Edition GOG");
+			SetGlobal(Global::SkyrimSteam, "Skyrim Special Edition");
 
-		SetGlobal(Global::Menus, menus);
+			std::vector<std::string> menus = { "Main Menu" };
+
+			SetGlobal(Global::Menus, menus);
+
+			initialGlobalsLoaded = true;
+
+		};
 
 		if(manager == Manager::Configuration) {
 
@@ -151,6 +161,15 @@ namespace YGGDRASIL {
 			case SKSE::MessagingInterface::kInputLoaded : {
 
 				feedback = "All inputs are loaded";
+
+				if(!YGGDRASIL::inputLoaded) {
+
+					RE::BSInputDeviceManager::GetSingleton()->AddEventSink(UIManager::GetSingleton());
+
+					YGGDRASIL::inputLoaded = true;
+
+				};
+
 				break;
 
 			};
@@ -166,8 +185,14 @@ namespace YGGDRASIL {
 
 				feedback = "Data is successfully loaded";
 
-				auto UI = UIManager::GetSingleton();
-				RE::UI::GetSingleton()->AddEventSink<RE::MenuOpenCloseEvent>(UI);
+				if(!YGGDRASIL::dataLoaded) {
+
+					RE::UI::GetSingleton()->AddEventSink<RE::MenuOpenCloseEvent>(UIManager::GetSingleton());
+
+					YGGDRASIL::dataLoaded = true;
+
+				};
+
 				break;
 
 			};

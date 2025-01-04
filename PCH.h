@@ -1,4 +1,5 @@
 #pragma once
+#pragma comment(lib, "Xinput.lib")
 
 #include <algorithm>
 #include <any>
@@ -19,9 +20,9 @@
 #include <vector>
 #include <windows.h>
 
-#include "dependencies/SimpleINI/SimpleIni.h" // Dependency : manual integration
+#include <Xinput.h>
 
-#include "dependencies/SimpleINI/SimpleIni.h"
+#include "dependencies/SimpleINI/SimpleIni.h" // Dependency : manual integration
 
 #include "RE/Skyrim.h" // Dependency : vcpkg integration
 #include "SKSE/SKSE.h" // Dependency : vcpkg integration

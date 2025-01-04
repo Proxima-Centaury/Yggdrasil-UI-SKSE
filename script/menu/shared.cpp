@@ -52,6 +52,21 @@ void SharedMenuManager::SKSEGetMenu(const RE::FxDelegateArgs& args) {
 };
 
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
+// RETURNS USER'S CURRENT CONTROLLER DEVICE
+// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
+void SharedMenuManager::SKSEGetPlatform(const RE::FxDelegateArgs& args) {
+
+	LogManager::Log(LogManager::LogLevel::Debug, "Executing \"SKSEGetPlatform\" from UI GameDelegate call", true);
+
+	SKSELog(args);
+
+	auto movieClip = args.GetMovie();
+
+	movieClip->SetVariable("_currentPlatform", RE::GFxValue(YGGDRASIL::GetGlobal<YGGDRASIL::Platform>(YGGDRASIL::Global::CurrentPlatform)));
+
+};
+
+// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 // RETURNS GAME, SKSE AND YGUI VERSIONS
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 void SharedMenuManager::SKSEGetVersions(const RE::FxDelegateArgs& args) {

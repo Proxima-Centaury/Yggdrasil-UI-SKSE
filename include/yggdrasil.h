@@ -19,6 +19,7 @@ namespace YGGDRASIL {
 
 	enum class Global {
 
+		CurrentGamePlatform,
 		CurrentLocale,
 		CurrentPlatform,
 		GAMEVersion,
@@ -35,6 +36,7 @@ namespace YGGDRASIL {
 		PathToUISoundFX,
 		PathToUITranslationsFiles,
 		PluginName,
+		Settings,
 		SKSEVersion,
 		SkyrimGOG,
 		SkyrimSteam,
@@ -51,6 +53,15 @@ namespace YGGDRASIL {
 
 	};
 
+	enum class Platform {
+
+		PC,
+		PC_Gamepad,
+		PlayStation,
+		Xbox
+
+	};
+
 	class Container {
 
 		public :
@@ -62,6 +73,10 @@ namespace YGGDRASIL {
 	};
 
 	inline std::unordered_map<Global, std::any> globalVariables;
+
+	inline bool dataLoaded;
+	inline bool initialGlobalsLoaded;
+	inline bool inputLoaded;
 
 	template <typename UnknownType>
 	UnknownType GetGlobal(Global variable) {
@@ -82,8 +97,8 @@ namespace YGGDRASIL {
 
 	};
 
-	bool FindPlatform(const char* platform);
-	bool Init(Manager manager);
+	bool FindGamePlatform(const char* gamePlatform);
+	bool Initialize(Manager manager);
 	bool IsMenuHandled(std::string menuName);
 
 	void OnSKSEMessage(SKSE::MessagingInterface::Message* message);
