@@ -5,7 +5,7 @@
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 TranslationsManager::Languages TranslationsManager::GetCurrentGameLanguage() {
 
-	const char* currentPlatform = YGGDRASIL::GetGlobal<const char*>(YGGDRASIL::Global::CurrentPlatform);
+	const char* currentPlatform = YGGDRASIL::GetGlobal<const char*>(YGGDRASIL::Global::CurrentGamePlatform);
 
 	std::string pathToSkyrimINIFile = std::format("{}\\{}\\Skyrim.ini", YGGDRASIL::GetGlobal<std::string>(YGGDRASIL::Global::PathToMyGames), currentPlatform);
 
