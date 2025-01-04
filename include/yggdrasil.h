@@ -4,6 +4,7 @@ namespace YGGDRASIL {
 
 	struct MenuItem {
 
+		bool confirmation;
 		bool disabled;
 		bool selected;
 
@@ -12,8 +13,8 @@ namespace YGGDRASIL {
 
 		std::optional<std::string> path;
 
-		MenuItem(bool isDisabled, const std::string& itemLabel, std::optional<std::string> itemPath, bool isSelected, const std::string& itemText)
-		: disabled(isDisabled), label(itemLabel), path(itemPath), selected(isSelected), text(itemText) {};
+		MenuItem(bool hasConfirmation, bool isDisabled, const std::string& itemLabel, std::optional<std::string> itemPath, bool isSelected, const std::string& itemText)
+		: confirmation(hasConfirmation), disabled(isDisabled), label(itemLabel), path(itemPath), selected(isSelected), text(itemText) {};
 
 	};
 

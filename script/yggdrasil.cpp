@@ -93,6 +93,7 @@ namespace YGGDRASIL {
 		RE::GFxValue object;
 		view->CreateObject(&object);
 
+		object.SetMember("confirmation", RE::GFxValue(item.confirmation));
 		object.SetMember("disabled", RE::GFxValue(item.disabled));
 		object.SetMember("label", RE::GFxValue(item.label.c_str()));
 		object.SetMember("path", (item.path) ? RE::GFxValue(item.path->c_str()) : RE::GFxValue(RE::GFxValue::ValueType::kNull));
