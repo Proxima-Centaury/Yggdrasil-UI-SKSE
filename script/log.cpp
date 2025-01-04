@@ -61,14 +61,14 @@ bool LogManager::Init() {
 
         CoTaskMemFree(myDocuments);
 
-        bool foundGOG = YGGDRASIL::FindPlatform(YGGDRASIL::GetGlobal<const char*>(YGGDRASIL::Global::SkyrimGOG));
-        bool foundSteam = YGGDRASIL::FindPlatform(YGGDRASIL::GetGlobal<const char*>(YGGDRASIL::Global::SkyrimSteam));
+        bool foundGOG = YGGDRASIL::FindGamePlatform(YGGDRASIL::GetGlobal<const char*>(YGGDRASIL::Global::SkyrimGOG));
+        bool foundSteam = YGGDRASIL::FindGamePlatform(YGGDRASIL::GetGlobal<const char*>(YGGDRASIL::Global::SkyrimSteam));
 
         if(foundGOG) {
 
             if(CreateLogFile()) {
 
-                YGGDRASIL::SetGlobal(YGGDRASIL::Global::CurrentPlatform, YGGDRASIL::GetGlobal<const char*>(YGGDRASIL::Global::SkyrimGOG));
+                YGGDRASIL::SetGlobal(YGGDRASIL::Global::CurrentGamePlatform, YGGDRASIL::GetGlobal<const char*>(YGGDRASIL::Global::SkyrimGOG));
                 return true;
 
             };
@@ -79,7 +79,7 @@ bool LogManager::Init() {
 
             if(CreateLogFile()) {
 
-                YGGDRASIL::SetGlobal(YGGDRASIL::Global::CurrentPlatform, YGGDRASIL::GetGlobal<const char*>(YGGDRASIL::Global::SkyrimSteam));
+                YGGDRASIL::SetGlobal(YGGDRASIL::Global::CurrentGamePlatform, YGGDRASIL::GetGlobal<const char*>(YGGDRASIL::Global::SkyrimSteam));
                 return true;
 
             };

@@ -6,11 +6,11 @@ extern "C" DLLEXPORT bool SKSEPlugin_Load(const SKSE::LoadInterface* skse) {
 
     SKSE::Init(skse);
 
-    YGGDRASIL::ToggleDebuggingConsole(false);
+    YGGDRASIL::ToggleDebuggingConsole(true);
 
-    bool isConfigurationInitialized = YGGDRASIL::Init(YGGDRASIL::Manager::Configuration);
-    bool isLogInitialized = YGGDRASIL::Init(YGGDRASIL::Manager::Log);
-    bool isTranslationInitialized = YGGDRASIL::Init(YGGDRASIL::Manager::Translation);
+    bool isConfigurationInitialized = YGGDRASIL::Initialize(YGGDRASIL::Manager::Configuration);
+    bool isLogInitialized = YGGDRASIL::Initialize(YGGDRASIL::Manager::Log);
+    bool isTranslationInitialized = YGGDRASIL::Initialize(YGGDRASIL::Manager::Translation);
 
     auto extenderVersion = skse->SKSEVersion();
     auto runtimeVersion = skse->RuntimeVersion();

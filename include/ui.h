@@ -1,27 +1,32 @@
 #pragma once
 
-class UIManager : public RE::BSTEventSink<RE::MenuOpenCloseEvent> {
+class UIManager : public RE::BSTEventSink<RE::MenuOpenCloseEvent>, public RE::BSTEventSink<RE::InputEvent*> {
 
-    public :
+	public :
 
-        static UIManager* GetSingleton() {
+		virtual ~UIManager() = default;
+		UIManager() = default;
+		UIManager(const UIManager&) = delete;
+		UIManager(UIManager&&) = delete;
+		UIManager& operator=(const UIManager&) = delete;
+		UIManager& operator=(UIManager&&) = delete;
 
-            static UIManager instance;
-            return &instance;
+		static UIManager* GetSingleton() {
 
-        };
+			static UIManager instance;
+			return &instance;
 
-        RE::BSEventNotifyControl ProcessEvent(const RE::MenuOpenCloseEvent* event, RE::BSTEventSource<RE::MenuOpenCloseEvent>* eventSource) override;
+		};
 
-    private :
+		RE::BSEventNotifyControl ProcessEvent(const RE::MenuOpenCloseEvent* event, RE::BSTEventSource<RE::MenuOpenCloseEvent>* eventSource) override;
+		RE::BSEventNotifyControl ProcessEvent(RE::InputEvent* const* event, RE::BSTEventSource<RE::InputEvent*>* eventSource) override;
 
-        UIManager() = default;
-        UIManager(const UIManager&) = delete;
-        UIManager& operator=(const UIManager&) = delete;
+	private :
 
-        RE::FxDelegate* GameDelegate;
+		RE::FxDelegate* GameDelegate { nullptr };
 
-        bool RegisterFxDelegateCallbacks(std::string menuName);
-        bool UnregisterFxDelegateCallbacks(std::string menuName);
+		bool IsXboxController();
+		bool RegisterFxDelegateCallbacks(std::string menuName);
+		bool UnregisterFxDelegateCallbacks(std::string menuName);
 
 };
