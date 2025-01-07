@@ -6,8 +6,6 @@ class SharedMenuManager : public RE::FxDelegateHandler {
 
 		void Accept(CallbackProcessor* processor) override {
 
-			LogManager::Log(LogManager::LogLevel::Debug, "Running \"SharedMenuManager::Accept\"", true);
-
 			processor->Process("SKSEGetMenu", SharedMenuManager::SKSEGetMenu);
 			processor->Process("SKSEGetPlatform", SharedMenuManager::SKSEGetPlatform);
 			processor->Process("SKSEGetVersions", SharedMenuManager::SKSEGetVersions);
