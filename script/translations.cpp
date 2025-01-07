@@ -51,6 +51,7 @@ bool TranslationsManager::Init() {
 
 			locale = "Chinese";
 			supportedLocale = true;
+			break;
 
 		};
 
@@ -58,6 +59,7 @@ bool TranslationsManager::Init() {
 
 			locale = "English";
 			supportedLocale = true;
+			break;
 
 		};
 
@@ -65,6 +67,7 @@ bool TranslationsManager::Init() {
 
 			locale = "French";
 			supportedLocale = true;
+			break;
 
 		};
 
@@ -72,6 +75,7 @@ bool TranslationsManager::Init() {
 
 			locale = "German";
 			supportedLocale = true;
+			break;
 
 		};
 
@@ -79,6 +83,7 @@ bool TranslationsManager::Init() {
 
 			locale = "Italian";
 			supportedLocale = true;
+			break;
 
 		};
 
@@ -86,6 +91,7 @@ bool TranslationsManager::Init() {
 
 			locale = "Japanese";
 			supportedLocale = true;
+			break;
 
 		};
 
@@ -93,6 +99,7 @@ bool TranslationsManager::Init() {
 
 			locale = "Polish";
 			supportedLocale = true;
+			break;
 
 		};
 
@@ -100,12 +107,14 @@ bool TranslationsManager::Init() {
 
 			locale = "Russian";
 			supportedLocale = true;
+			break;
 
 		};
 
 		default : {
 
 			supportedLocale = false;
+			break;
 
 		};
 

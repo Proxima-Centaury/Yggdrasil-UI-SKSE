@@ -32,20 +32,6 @@ class TranslationsManager {
 
         };
 
-        const std::unordered_map<Languages, std::string> languageFiles = {
-
-            { Languages::Chinese, "translate_chinese.txt" },
-            { Languages::English, "translate_english.txt" },
-            { Languages::French, "translate_french.txt" },
-            { Languages::German, "translate_german.txt" },
-            { Languages::Italian, "translate_italian.txt" },
-            { Languages::Japanese, "translate_japanese.txt" },
-            { Languages::Polish, "translate_polish.txt" },
-            { Languages::Russian, "translate_russian.txt" },
-            { Languages::Spanish, "translate_spanish.txt" }
-
-        };
-
         static TranslationsManager& GetSingleton() {
 
             static TranslationsManager instance;
@@ -61,12 +47,6 @@ class TranslationsManager {
 
         std::unordered_set<std::string> existingKeys;
 
-        bool ReadExistingTranslationKeys(const std::string& filePath);
-        bool ReadTranslationsFile(const std::string& filePath);
-        bool WriteInTranslationsFile(const std::string& skyrimTranslationsFileName);
-
         Languages GetCurrentGameLanguage();
-
-        std::string GetSkyrimTranslationsFileName();
 
 };
