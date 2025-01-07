@@ -31,11 +31,11 @@ extern "C" DLLEXPORT bool SKSEPlugin_Load(const SKSE::LoadInterface* skse) {
 
 		LogManager::SetLogLevel();
 
-		std::string pathToJSONFiles = YGGDRASIL::GetGlobal<const char*>(YGGDRASIL::Global::PathToJSONFiles, "PathToJSONFiles");
+		std::string pathToConfigurationFile = YGGDRASIL::GetGlobal<const char*>(YGGDRASIL::Global::PathToConfigurationFile, "PathToConfigurationFile");
 		std::string pathToLogFile = YGGDRASIL::GetGlobal<std::string>(YGGDRASIL::Global::PathToLogFile, "PathToLogFile");
 		std::string pluginName = YGGDRASIL::GetGlobal<const char*>(YGGDRASIL::Global::PluginName, "PluginName");
 
-		LogManager::Log(LogManager::LogLevel::Information, std::format("\"{}.json\" found in : \"{}\"", pluginName, pathToJSONFiles), false);
+		LogManager::Log(LogManager::LogLevel::Information, std::format("\"{}.json\" found in : \"{}\"", pluginName, pathToConfigurationFile), false);
 		LogManager::Log(LogManager::LogLevel::Information, std::format("\"{}.log\" found in : \"{}\"", pluginName, pathToLogFile), true);
 
 		SKSE::GetMessagingInterface()->RegisterListener(YGGDRASIL::OnSKSEMessage);

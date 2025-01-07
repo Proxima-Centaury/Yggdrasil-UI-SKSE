@@ -45,7 +45,7 @@ namespace YGGDRASIL {
 		if(!initialGlobalsLoaded) {
 
 			SetGlobal(Global::PathToBackgrounds, "Data\\Interface\\Yggdrasil UI\\Backgrounds");
-			SetGlobal(Global::PathToJSONFiles, "Data\\Interface\\JSON");
+			SetGlobal(Global::PathToConfigurationFile, "Data\\Interface\\JSON");
 			SetGlobal(Global::PathToSkyrimInterface, "Data\\Interface");
 			SetGlobal(Global::PathToUISoundFX, "Data\\Interface\\Yggdrasil UI\\SFX");
 			SetGlobal(Global::PathToUITranslationsFiles, "Data\\Interface\\Yggdrasil UI\\Translations");

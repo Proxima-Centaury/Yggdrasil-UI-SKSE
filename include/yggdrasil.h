@@ -28,7 +28,7 @@ namespace YGGDRASIL {
 		Menus,
 		MenuState,
 		PathToBackgrounds,
-		PathToJSONFiles,
+		PathToConfigurationFile,
 		PathToLogFile,
 		PathToMyGames,
 		PathToMyDocuments,
