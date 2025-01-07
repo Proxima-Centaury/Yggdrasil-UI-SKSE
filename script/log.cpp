@@ -5,10 +5,10 @@
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 void LogManager::BreakLine() {
 
-    auto logger = spdlog::get("log");
-    logger->set_pattern("");
-    logger->info("");
-    logger->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%n] [%l] [%s:%#] %v");
+	auto logger = spdlog::get("log");
+	logger->set_pattern("");
+	logger->info("");
+	logger->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%n] [%l] [%s:%#] %v");
 
 };
 
@@ -17,21 +17,23 @@ void LogManager::BreakLine() {
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 bool LogManager::CreateLogFile() {
 
-    std::string pathToSKSE = GetGlobal<std::string>(YGGDRASIL::Global::PathToSKSE);
-    std::string pluginName = GetGlobal<const char*>(YGGDRASIL::Global::PluginName);
+	std::string pathToSKSE = GetGlobal<std::string>(YGGDRASIL::Global::PathToSKSE, "PathToSKSE");
+	std::string pluginName = GetGlobal<const char*>(YGGDRASIL::Global::PluginName, "PluginName");
 
-    if(!fs::exists(pathToSKSE)) return false;
-    if(!fs::is_directory(pathToSKSE)) return false;
+	if(!fs::exists(pathToSKSE)) return false;
+	if(!fs::is_directory(pathToSKSE)) return false;
 
-    YGGDRASIL::SetGlobal(YGGDRASIL::Global::PathToLogFile, std::format("{}\\{}.log", pathToSKSE, pluginName));
+	YGGDRASIL::SetGlobal(YGGDRASIL::Global::PathToLogFile, std::format("{}\\{}.log", pathToSKSE, pluginName));
 
-    std::string pathToLogFile = GetGlobal<std::string>(YGGDRASIL::Global::PathToLogFile);
+	std::string pathToLogFile = GetGlobal<std::string>(YGGDRASIL::Global::PathToLogFile, "PathToLogFile");
 
-    auto fileSink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(pathToLogFile, true);
-    auto sink = std::make_shared<spdlog::logger>("log", std::move(fileSink));
+	auto fileSink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(pathToLogFile, true);
+	auto sink = std::make_shared<spdlog::logger>("log", std::move(fileSink));
 
-    spdlog::set_default_logger(std::move(sink));
-    return true;
+	std::cout << "Log file created at : " << pathToLogFile << std::endl;
+
+	spdlog::set_default_logger(std::move(sink));
+	return true;
 
 };
 
@@ -40,57 +42,65 @@ bool LogManager::CreateLogFile() {
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 bool LogManager::Init() {
 
-    PWSTR myDocuments = NULL;
+	PWSTR myDocuments = NULL;
 
-    if(SUCCEEDED(SHGetKnownFolderPath(FOLDERID_Documents, 0, NULL, &myDocuments))) {
+	if(SUCCEEDED(SHGetKnownFolderPath(FOLDERID_Documents, 0, NULL, &myDocuments))) {
 
-        char myDocumentsFolderPath[MAX_PATH];
+		char myDocumentsFolderPath[MAX_PATH];
 
-        size_t convertedChars = 0;
-        errno_t result = wcstombs_s(&convertedChars, myDocumentsFolderPath, sizeof(myDocumentsFolderPath), myDocuments, _TRUNCATE);
+		size_t convertedChars = 0;
+		errno_t result = wcstombs_s(&convertedChars, myDocumentsFolderPath, sizeof(myDocumentsFolderPath), myDocuments, _TRUNCATE);
 
-        if(result == 0) std::cout << "Conversion successful : " << myDocumentsFolderPath << "\n";
+		if(result == 0) std::cout << "Conversion successful : " << myDocumentsFolderPath << std::endl;
 
-        if(!myDocumentsFolderPath) SKSE::stl::report_and_fail("Documents path not found, logs disabled.");
+		if(!myDocumentsFolderPath) SKSE::stl::report_and_fail("My Documents path not found.");
 
-        std::wstring wStringMyDocuments(myDocuments);
-        std::string dStringMyDocuments(wStringMyDocuments.begin(), wStringMyDocuments.end());
+		std::wstring wStringMyDocuments(myDocuments);
+		std::string dStringMyDocuments(wStringMyDocuments.begin(), wStringMyDocuments.end());
 
-        YGGDRASIL::SetGlobal(YGGDRASIL::Global::PathToMyDocuments, myDocuments);
-        YGGDRASIL::SetGlobal(YGGDRASIL::Global::PathToMyGames, std::format("{}\\My Games", dStringMyDocuments));
+		YGGDRASIL::SetGlobal(YGGDRASIL::Global::PathToMyDocuments, myDocuments);
+		YGGDRASIL::SetGlobal(YGGDRASIL::Global::PathToMyGames, std::format("{}\\My Games", dStringMyDocuments));
 
-        CoTaskMemFree(myDocuments);
+		CoTaskMemFree(myDocuments);
 
-        bool foundGOG = YGGDRASIL::FindGamePlatform(YGGDRASIL::GetGlobal<const char*>(YGGDRASIL::Global::SkyrimGOG));
-        bool foundSteam = YGGDRASIL::FindGamePlatform(YGGDRASIL::GetGlobal<const char*>(YGGDRASIL::Global::SkyrimSteam));
+		std::string skyrimGOG = YGGDRASIL::GetGlobal<const char*>(YGGDRASIL::Global::SkyrimGOG, "SkyrimGOG");
+		std::string skyrimSteam = YGGDRASIL::GetGlobal<const char*>(YGGDRASIL::Global::SkyrimSteam, "SkyrimSteam");
 
-        if(foundGOG) {
+		bool foundGOG = YGGDRASIL::FindGamePlatform(skyrimGOG.c_str());
+		bool foundSteam = YGGDRASIL::FindGamePlatform(skyrimSteam.c_str());
 
-            if(CreateLogFile()) {
+		if(foundGOG) {
 
-                YGGDRASIL::SetGlobal(YGGDRASIL::Global::CurrentGamePlatform, YGGDRASIL::GetGlobal<const char*>(YGGDRASIL::Global::SkyrimGOG));
-                return true;
+			if(CreateLogFile()) {
 
-            };
+				YGGDRASIL::SetGlobal(YGGDRASIL::Global::CurrentGamePlatform, skyrimGOG);
+				return true;
 
-        };
+			};
 
-        if(foundSteam) {
+		};
 
-            if(CreateLogFile()) {
+		if(foundSteam) {
 
-                YGGDRASIL::SetGlobal(YGGDRASIL::Global::CurrentGamePlatform, YGGDRASIL::GetGlobal<const char*>(YGGDRASIL::Global::SkyrimSteam));
-                return true;
+			if(CreateLogFile()) {
 
-            };
+				YGGDRASIL::SetGlobal(YGGDRASIL::Global::CurrentGamePlatform, skyrimSteam);
+				return true;
 
-        };
+			};
 
-        if(!foundGOG && !foundSteam) return false;
+		};
 
-    };
+		if(!foundGOG && !foundSteam) {
 
-    return false;
+			std::cout << "Failed to create log file" << std::endl;
+			return false;
+
+		};
+
+	};
+
+	return false;
 
 };
 
@@ -99,54 +109,54 @@ bool LogManager::Init() {
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 void LogManager::Log(LogLevel type, const std::string& message, bool shouldBreakLine) {
 
-    switch(type) {
+	switch(type) {
 
-        case LogLevel::Critical : {
+		case LogLevel::Critical : {
 
-            logger::critical("{}.", message);
-            break;
+			logger::critical("{}.", message);
+			break;
 
-        };
+		};
 
-        case LogLevel::Debug : {
+		case LogLevel::Debug : {
 
-            logger::debug("{}.", message);
-            break;
+			logger::debug("{}.", message);
+			break;
 
-        };
+		};
 
-        case LogLevel::Error : {
+		case LogLevel::Error : {
 
-            logger::error("{}.", message);
-            break;
+			logger::error("{}.", message);
+			break;
 
-        };
+		};
 
-        case LogLevel::Info : {
+		case LogLevel::Information : {
 
-            logger::info("{}.", message);
-            break;
+			logger::info("{}.", message);
+			break;
 
-        };
+		};
 
-        case LogLevel::Trace : {
+		case LogLevel::Trace : {
 
-            logger::trace("{}.", message);
-            break;
+			logger::trace("{}.", message);
+			break;
 
-        };
+		};
 
-        case LogLevel::Warn : {
+		case LogLevel::Warning : {
 
-            logger::warn("{}.", message);
-            break;
+			logger::warn("{}.", message);
+			break;
 
-        };
+		};
 
-    };
+	};
 
-    if(shouldBreakLine) BreakLine();
-    return;
+	if(shouldBreakLine) BreakLine();
+	return;
 
 };
 
@@ -155,59 +165,53 @@ void LogManager::Log(LogLevel type, const std::string& message, bool shouldBreak
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 void LogManager::SetLogLevel() {
 
-    std::string pathToConfigurationFile = YGGDRASIL::GetGlobal<std::string>(YGGDRASIL::Global::PathToConfigurationFile);
+	json configuration = YGGDRASIL::GetGlobal<json>(YGGDRASIL::Global::Configuration, "Configuration");
 
-    CSimpleIniA configuration = &ConfigurationManager::GetSingleton();
+	std::string level = configuration["debug"];
+	std::string defaultLevel = "Trace";
 
-    SI_Error configurationLoadState = configuration.LoadFile(pathToConfigurationFile.c_str());
+	spdlog::level::level_enum logLevel;
 
-    if(configurationLoadState == 0) std::cout << "Configuration file loaded" << "\n";
+	if (strcmp(level.c_str(), "Critical") == 0) {
 
-    const char* defaultLogLevel = "Trace";
-    const char* userLogLevelPreference = configuration.GetValue("DEBUG", "SetLogLevel", defaultLogLevel);
+		logLevel = spdlog::level::critical;
 
-    spdlog::level::level_enum logLevel;
+	} else if (strcmp(level.c_str(), "Debug") == 0) {
 
-    if (strcmp(userLogLevelPreference, "Critical") == 0) {
+		logLevel = spdlog::level::debug;
 
-        logLevel = spdlog::level::critical;
+	} else if (strcmp(level.c_str(), "Error") == 0) {
 
-    } else if (strcmp(userLogLevelPreference, "Debug") == 0) {
+		logLevel = spdlog::level::err;
 
-        logLevel = spdlog::level::debug;
+	} else if (strcmp(level.c_str(), "Information") == 0) {
 
-    } else if (strcmp(userLogLevelPreference, "Error") == 0) {
+		logLevel = spdlog::level::info;
 
-        logLevel = spdlog::level::err;
+	} else if (strcmp(level.c_str(), "Trace") == 0) {
 
-    } else if (strcmp(userLogLevelPreference, "Info") == 0) {
+		logLevel = spdlog::level::trace;
 
-        logLevel = spdlog::level::info;
+	} else if (strcmp(level.c_str(), "Warning") == 0) {
 
-    } else if (strcmp(userLogLevelPreference, "Trace") == 0) {
+		logLevel = spdlog::level::warn;
 
-        logLevel = spdlog::level::trace;
+	} else {
 
-    } else if (strcmp(userLogLevelPreference, "Warn") == 0) {
+		Log(LogLevel::Warning, std::format("Unknown log level \"{}\" in configuration", level), false);
+		Log(LogLevel::Warning, std::format("Setting log level to : \"{}\"", defaultLevel), true);
+		logLevel = spdlog::level::trace;
 
-        logLevel = spdlog::level::warn;
+		spdlog::set_level(logLevel);
+		spdlog::flush_on(logLevel);
+		return;
 
-    } else {
+	};
 
-        Log(LogLevel::Error, std::format("Unknown log level \"{}\" in configuration", userLogLevelPreference), false);
-        Log(LogLevel::Error, std::format("Setting log level to : \"{}\"", defaultLogLevel), true);
-        logLevel = spdlog::level::trace;
+	Log(LogLevel::Information, "Loading log level from configuration", false);
+	Log(LogLevel::Information, std::format("Setting log level to : \"{}\"", level), true);
 
-        spdlog::set_level(logLevel);
-        spdlog::flush_on(logLevel);
-        return;
-
-    };
-
-    Log(LogLevel::Info, "Loading log level from configuration", false);
-    Log(LogLevel::Info, std::format("Setting log level to : \"{}\"", userLogLevelPreference), true);
-
-    spdlog::set_level(logLevel);
-    spdlog::flush_on(logLevel);
+	spdlog::set_level(logLevel);
+	spdlog::flush_on(logLevel);
 
 };

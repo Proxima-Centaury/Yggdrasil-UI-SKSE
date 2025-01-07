@@ -5,7 +5,7 @@
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 void SharedMenuManager::SKSEGetMenu(const RE::FxDelegateArgs& args) {
 
-	LogManager::Log(LogManager::LogLevel::Debug, "Executing \"SKSEGetMenu\" from UI GameDelegate call", true);
+	LogManager::Log(LogManager::LogLevel::Information, "Executing \"SKSEGetMenu\" from UI GameDelegate call", true);
 
 	SKSELog(args);
 
@@ -56,13 +56,13 @@ void SharedMenuManager::SKSEGetMenu(const RE::FxDelegateArgs& args) {
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 void SharedMenuManager::SKSEGetPlatform(const RE::FxDelegateArgs& args) {
 
-	LogManager::Log(LogManager::LogLevel::Debug, "Executing \"SKSEGetPlatform\" from UI GameDelegate call", true);
+	LogManager::Log(LogManager::LogLevel::Information, "Executing \"SKSEGetPlatform\" from UI GameDelegate call", true);
 
 	SKSELog(args);
 
 	auto movieClip = args.GetMovie();
 
-	movieClip->SetVariable("_currentPlatform", RE::GFxValue(YGGDRASIL::GetGlobal<YGGDRASIL::Platform>(YGGDRASIL::Global::CurrentPlatform)));
+	movieClip->SetVariable("_currentPlatform", RE::GFxValue(YGGDRASIL::GetGlobal<YGGDRASIL::Platform>(YGGDRASIL::Global::CurrentPlatform, "CurrentPlatform")));
 
 };
 
@@ -71,7 +71,7 @@ void SharedMenuManager::SKSEGetPlatform(const RE::FxDelegateArgs& args) {
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 void SharedMenuManager::SKSEGetVersions(const RE::FxDelegateArgs& args) {
 
-	LogManager::Log(LogManager::LogLevel::Debug, "Executing \"SKSEGetVersions\" from UI GameDelegate call", true);
+	LogManager::Log(LogManager::LogLevel::Information, "Executing \"SKSEGetVersions\" from UI GameDelegate call", true);
 
 	SKSELog(args);
 
@@ -80,9 +80,9 @@ void SharedMenuManager::SKSEGetVersions(const RE::FxDelegateArgs& args) {
 	RE::GFxValue response;
 	movieClip->CreateObject(&response);
 
-	response.SetMember("GAME", RE::GFxValue(YGGDRASIL::GetGlobal<std::string>(YGGDRASIL::Global::GAMEVersion)));
-	response.SetMember("SKSE", RE::GFxValue(YGGDRASIL::GetGlobal<std::string>(YGGDRASIL::Global::SKSEVersion)));
-	response.SetMember("YGUI", RE::GFxValue(YGGDRASIL::GetGlobal<std::string>(YGGDRASIL::Global::YGUIVersion)));
+	response.SetMember("SKSE", RE::GFxValue(YGGDRASIL::GetGlobal<std::string>(YGGDRASIL::Global::SKSEVersion, "SKSEVersion")));
+	response.SetMember("TESV", RE::GFxValue(YGGDRASIL::GetGlobal<std::string>(YGGDRASIL::Global::TESVVersion, "TESVVersion")));
+	response.SetMember("YGUI", RE::GFxValue(YGGDRASIL::GetGlobal<std::string>(YGGDRASIL::Global::YGUIVersion, "YGUIVersion")));
 
 	movieClip->SetVariable("versions", response);
 
@@ -175,7 +175,7 @@ void SharedMenuManager::SKSELogProcessArgument(const RE::GFxValue& arg, std::uin
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 void SharedMenuManager::SKSEQuitGame(const RE::FxDelegateArgs& args) {
 
-	LogManager::Log(LogManager::LogLevel::Debug, "Executing \"SKSEQuitGame\" from UI GameDelegate call", true);
+	LogManager::Log(LogManager::LogLevel::Information, "Executing \"SKSEQuitGame\" from UI GameDelegate call", true);
 
 	SKSELog(args);
 
@@ -188,13 +188,43 @@ void SharedMenuManager::SKSEQuitGame(const RE::FxDelegateArgs& args) {
 };
 
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
+// CLOSES SWF FILE
+// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
+void SharedMenuManager::UIClose(const RE::FxDelegateArgs& args) {
+
+	LogManager::Log(LogManager::LogLevel::Information, "Executing \"UIClose\" from UI GameDelegate call", true);
+
+	SKSELog(args);
+
+	auto ui = args[0].GetString();
+
+	YGGDRASIL::CloseMenu(ui);
+
+};
+
+// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 // HANDLES ACTIONS THAT NEED TO BE TRIGGERED ON UI STATE END
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 void SharedMenuManager::UIEndState(const RE::FxDelegateArgs& args) {
 
-	LogManager::Log(LogManager::LogLevel::Debug, "Executing \"UIEndState\" from UI GameDelegate call", true);
+	LogManager::Log(LogManager::LogLevel::Information, "Executing \"UIEndState\" from UI GameDelegate call", true);
 
 	SKSELog(args);
+
+};
+
+// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
+// CLOSES SWF FILE
+// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
+void SharedMenuManager::UIOpen(const RE::FxDelegateArgs& args) {
+
+	LogManager::Log(LogManager::LogLevel::Information, "Executing \"UIOpen\" from UI GameDelegate call", true);
+
+	SKSELog(args);
+
+	auto ui = args[0].GetString();
+
+	YGGDRASIL::OpenMenu(ui);
 
 };
 
@@ -203,16 +233,16 @@ void SharedMenuManager::UIEndState(const RE::FxDelegateArgs& args) {
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 void SharedMenuManager::UIPlaySound(const RE::FxDelegateArgs& args) {
 
-	LogManager::Log(LogManager::LogLevel::Debug, "Executing \"UIPlaySound\" from UI GameDelegate call", true);
+	LogManager::Log(LogManager::LogLevel::Information, "Executing \"UIPlaySound\" from UI GameDelegate call", true);
 
 	SKSELog(args);
 
-	std::string pathToUISoundFX = YGGDRASIL::GetGlobal<const char*>(YGGDRASIL::Global::PathToUISoundFX);
+	std::string pathToUISoundFX = YGGDRASIL::GetGlobal<const char*>(YGGDRASIL::Global::PathToUISoundFX, "PathToUISoundFX");
 	std::string pathToUISoundFXFile = std::format("{}\\{}.wav", pathToUISoundFX, args[0].GetString());
 
 	SFXManager::GetSingleton().QueueSFX(pathToUISoundFXFile);
 
-	LogManager::Log(LogManager::LogLevel::Info, std::format("Played SFX : \"{}\"", pathToUISoundFXFile), true);
+	LogManager::Log(LogManager::LogLevel::Information, std::format("Played SFX : \"{}\"", pathToUISoundFXFile), true);
 
 };
 
@@ -221,7 +251,7 @@ void SharedMenuManager::UIPlaySound(const RE::FxDelegateArgs& args) {
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 void SharedMenuManager::UIStartState(const RE::FxDelegateArgs& args) {
 
-	LogManager::Log(LogManager::LogLevel::Debug, "Executing \"UIStartState\" from UI GameDelegate call", true);
+	LogManager::Log(LogManager::LogLevel::Information, "Executing \"UIStartState\" from UI GameDelegate call", true);
 
 	SKSELog(args);
 

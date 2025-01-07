@@ -9,9 +9,9 @@ class LogManager {
             Critical,
             Debug,
             Error,
-            Info,
+            Information,
             Trace,
-            Warn
+            Warning
 
         };
 

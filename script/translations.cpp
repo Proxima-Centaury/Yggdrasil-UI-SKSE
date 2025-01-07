@@ -5,11 +5,11 @@
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 TranslationsManager::Languages TranslationsManager::GetCurrentGameLanguage() {
 
-	const char* currentPlatform = YGGDRASIL::GetGlobal<const char*>(YGGDRASIL::Global::CurrentGamePlatform);
+	std::string currentPlatform = YGGDRASIL::GetGlobal<std::string>(YGGDRASIL::Global::CurrentGamePlatform, "CurrentGamePlatform");
 
-	std::string pathToSkyrimINIFile = std::format("{}\\{}\\Skyrim.ini", YGGDRASIL::GetGlobal<std::string>(YGGDRASIL::Global::PathToMyGames), currentPlatform);
+	std::string pathToSkyrimINIFile = std::format("{}\\{}\\Skyrim.ini", YGGDRASIL::GetGlobal<std::string>(YGGDRASIL::Global::PathToMyGames, "PathToMyGames"), currentPlatform);
 
-	LogManager::Log(LogManager::LogLevel::Info, std::format("Getting \"Skyrim.ini\" file for language detection : \"{}\"", pathToSkyrimINIFile), false);
+	LogManager::Log(LogManager::LogLevel::Information, std::format("Getting \"Skyrim.ini\" file for language detection : \"{}\"", pathToSkyrimINIFile), false);
 
 	CSimpleIniA ini;
 	ini.SetUnicode();
@@ -39,70 +39,80 @@ TranslationsManager::Languages TranslationsManager::GetCurrentGameLanguage() {
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 bool TranslationsManager::Init() {
 
+	std::string locale;
+
 	TranslationsManager::Languages currentLocale = GetCurrentGameLanguage();
 
 	switch(currentLocale) {
 
 		case TranslationsManager::Languages::Chinese : {
 
-			YGGDRASIL::SetGlobal(YGGDRASIL::Global::CurrentLocale, "chinese");
-			LogManager::Log(LogManager::LogLevel::Info, std::format("Detected language : \"{}\"", YGGDRASIL::GetGlobal<const char *>(YGGDRASIL::Global::CurrentLocale)), false);
+			locale = "Chinese";
+			YGGDRASIL::SetGlobal(YGGDRASIL::Global::CurrentLocale, locale);
+			LogManager::Log(LogManager::LogLevel::Information, std::format("Detected language : \"{}\"", locale), false);
 			return true;
 
 		};
 
 		case TranslationsManager::Languages::English : {
 
-			YGGDRASIL::SetGlobal(YGGDRASIL::Global::CurrentLocale, "english");
-			LogManager::Log(LogManager::LogLevel::Info, std::format("Detected language : \"{}\"", YGGDRASIL::GetGlobal<const char *>(YGGDRASIL::Global::CurrentLocale)), false);
+			locale = "English";
+			YGGDRASIL::SetGlobal(YGGDRASIL::Global::CurrentLocale, locale);
+			LogManager::Log(LogManager::LogLevel::Information, std::format("Detected language : \"{}\"", locale), false);
 			return true;
 
 		};
 
 		case TranslationsManager::Languages::French : {
 
-			YGGDRASIL::SetGlobal(YGGDRASIL::Global::CurrentLocale, "french");
-			LogManager::Log(LogManager::LogLevel::Info, std::format("Detected language : \"{}\"", YGGDRASIL::GetGlobal<const char *>(YGGDRASIL::Global::CurrentLocale)), false);
+			locale = "French";
+			YGGDRASIL::SetGlobal(YGGDRASIL::Global::CurrentLocale, locale);
+			LogManager::Log(LogManager::LogLevel::Information, std::format("Detected language : \"{}\"", locale), false);
 			return true;
 
 		};
 
 		case TranslationsManager::Languages::German : {
 
-			YGGDRASIL::SetGlobal(YGGDRASIL::Global::CurrentLocale, "german");
-			LogManager::Log(LogManager::LogLevel::Info, std::format("Detected language : \"{}\"", YGGDRASIL::GetGlobal<const char *>(YGGDRASIL::Global::CurrentLocale)), false);
+			locale = "German";
+			YGGDRASIL::SetGlobal(YGGDRASIL::Global::CurrentLocale, locale);
+			LogManager::Log(LogManager::LogLevel::Information, std::format("Detected language : \"{}\"", locale), false);
 			return true;
 
 		};
 
 		case TranslationsManager::Languages::Italian : {
 
-			YGGDRASIL::SetGlobal(YGGDRASIL::Global::CurrentLocale, "italian");
-			LogManager::Log(LogManager::LogLevel::Info, std::format("Detected language : \"{}\"", YGGDRASIL::GetGlobal<const char *>(YGGDRASIL::Global::CurrentLocale)), false);
+			locale = "Italian";
+			YGGDRASIL::SetGlobal(YGGDRASIL::Global::CurrentLocale, locale);
+			LogManager::Log(LogManager::LogLevel::Information, std::format("Detected language : \"{}\"", locale), false);
 			return true;
 
 		};
 
 		case TranslationsManager::Languages::Japanese : {
 
-			YGGDRASIL::SetGlobal(YGGDRASIL::Global::CurrentLocale, "japanese");
-			LogManager::Log(LogManager::LogLevel::Info, std::format("Detected language : \"{}\"", YGGDRASIL::GetGlobal<const char *>(YGGDRASIL::Global::CurrentLocale)), false);
+			locale = "Japanese";
+			YGGDRASIL::SetGlobal(YGGDRASIL::Global::CurrentLocale, locale);
+			LogManager::Log(LogManager::LogLevel::Information, std::format("Detected language : \"{}\"", locale), false);
 			return true;
 
 		};
 
 		case TranslationsManager::Languages::Polish : {
 
-			YGGDRASIL::SetGlobal(YGGDRASIL::Global::CurrentLocale, "polish");
-			LogManager::Log(LogManager::LogLevel::Info, std::format("Detected language : \"{}\"", YGGDRASIL::GetGlobal<const char *>(YGGDRASIL::Global::CurrentLocale)), false);
+			locale = "Polish";
+			YGGDRASIL::SetGlobal(YGGDRASIL::Global::CurrentLocale, locale);
+			LogManager::Log(LogManager::LogLevel::Information, std::format("Detected language : \"{}\"", locale), false);
 			return true;
 
 		};
 
 		case TranslationsManager::Languages::Russian : {
 
-			YGGDRASIL::SetGlobal(YGGDRASIL::Global::CurrentLocale, "russian");
-			LogManager::Log(LogManager::LogLevel::Info, std::format("Detected language : \"{}\"", YGGDRASIL::GetGlobal<const char *>(YGGDRASIL::Global::CurrentLocale)), false);
+			locale = "Russian";
+			YGGDRASIL::SetGlobal(YGGDRASIL::Global::CurrentLocale, locale);
+			LogManager::Log(LogManager::LogLevel::Information, std::format("Detected language : \"{}\"", locale), false);
 			return true;
 
 		};

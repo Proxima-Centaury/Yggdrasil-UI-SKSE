@@ -11,6 +11,7 @@ if(DEFINED ENV{SKYRIM_MODS_FOLDER} AND IS_DIRECTORY "$ENV{SKYRIM_MODS_FOLDER}")
 endif()
 
 find_package(CommonLibSSE CONFIG REQUIRED)
+find_package(nlohmann_json CONFIG REQUIRED)
 find_package(OpenAL REQUIRED)
 
 add_commonlibsse_plugin(${PROJECT_NAME}
@@ -32,6 +33,7 @@ target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_23)
 
 target_precompile_headers(${PROJECT_NAME} PRIVATE PCH.h)
 
+target_link_libraries(${PROJECT_NAME} PRIVATE nlohmann_json::nlohmann_json)
 target_link_libraries(${PROJECT_NAME} PRIVATE OpenAL::OpenAL)
 
 if(DEFINED OUTPUT_FOLDER)

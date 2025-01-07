@@ -20,14 +20,15 @@ namespace YGGDRASIL {
 
 	enum class Global {
 
+		Configuration,
 		CurrentGamePlatform,
 		CurrentLocale,
 		CurrentPlatform,
-		GAMEVersion,
+		Customization,
 		Menus,
 		MenuState,
 		PathToBackgrounds,
-		PathToConfigurationFile,
+		PathToJSONFiles,
 		PathToLogFile,
 		PathToMyGames,
 		PathToMyDocuments,
@@ -41,6 +42,7 @@ namespace YGGDRASIL {
 		SKSEVersion,
 		SkyrimGOG,
 		SkyrimSteam,
+		TESVVersion,
 		YGUIVersion
 
 	};
@@ -79,20 +81,20 @@ namespace YGGDRASIL {
 	inline bool initialGlobalsLoaded;
 	inline bool inputLoaded;
 
-	template <typename UnknownType>
-	UnknownType GetGlobal(Global variable) {
+	template <typename Type>
+	Type GetGlobal(Global variable, std::string name) {
 
 		try {
 
-			return std::any_cast<UnknownType>(globalVariables.at(variable));
+			return std::any_cast<Type>(globalVariables.at(variable));
 
 		} catch(const std::bad_any_cast& error) {
 
-			SKSE::stl::report_and_fail(std::string("Invalid type for global variable : ") + error.what());
+			SKSE::stl::report_and_fail(std::format("Invalid type for global variable : {} ( {} )", name, error.what()));
 
 		} catch(const std::out_of_range&) {
 
-			SKSE::stl::report_and_fail("Global variable not found.");
+			SKSE::stl::report_and_fail(std::format("Global variable {} not found", name));
 
 		};
 
@@ -102,12 +104,15 @@ namespace YGGDRASIL {
 	bool Initialize(Manager manager);
 	bool IsMenuHandled(std::string menuName);
 
+	void CloseMenu(const std::string& menuName);
 	void OnSKSEMessage(SKSE::MessagingInterface::Message* message);
-	template <typename UnknownType>
-	void SetGlobal(Global variable, UnknownType value) { globalVariables[variable] = value; };
+	void OpenMenu(const std::string& menuName);
 	void ToggleDebuggingConsole(bool flag);
 	void TrimLeadingSpaces(std::string& text);
 	void TrimTrailingSpaces(std::string& text);
+
+	template <typename Type>
+	void SetGlobal(Global variable, Type value) { globalVariables[variable] = value; };
 
 	std::string UTF16ToUTF8(const std::wstring& utf16String);
 

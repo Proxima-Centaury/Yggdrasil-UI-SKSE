@@ -1,90 +1,52 @@
 #include "../include/yggdrasil.h"
 
-std::string ConfigurationManager::BuildSectionKeyString(const char* section, const char* key) const { return std::string(section) + "." + key; };
-
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 // CREATES CONFIGURATION FILE
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 bool ConfigurationManager::CreateConfigurationFile(std::string pathToConfigurationFile) {
 
-    ResetConfigurationFile();
+	json configurationDefaults = {
 
-    SI_Error configurationCreationState = configuration.SaveFile(pathToConfigurationFile.c_str());
+		{ "debug", "Trace" }
+		// Add audio parameters
 
-    if(configurationCreationState < 0) return false;
+	};
 
-    YGGDRASIL::SetGlobal(YGGDRASIL::Global::PathToConfigurationFile, pathToConfigurationFile);
-    return true;
+	std::ofstream configurationFile(pathToConfigurationFile);
+
+	if(configurationFile.is_open()) {
+
+		configurationFile << configurationDefaults.dump(4);
+		configurationFile.close();
+
+		std::cout << "Default configuration JSON file created at : " << pathToConfigurationFile << std::endl;
+		return true;
+
+	} else {
+
+		std::cout << "Failed to create configuration JSON file at : " << pathToConfigurationFile << std::endl;
+		return false;
+
+	};
 
 };
 
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
-// GETS VALUE FROM CONFIGURATION FILE
+// CHECKS IF CONFIGURATION FILE EXISTS
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
-template <typename ValueType>
-ValueType ConfigurationManager::GetValue(const char* section, const char* key, ValueType defaultValue) const {
+bool ConfigurationManager::FindConfigurationFile(std::string pathToConfigurationFile) {
 
-    std::string sectionKey = BuildSectionKeyString(section, key);
+	if(!fs::exists(pathToConfigurationFile)) {
 
-    auto iterator = cachedValues.find(sectionKey);
+		std::cout << "Configuration JSON file not found at : " << pathToConfigurationFile << std::endl;
+		return false;
 
-    if(iterator != cachedValues.end()) {
+	} else {
 
-        try {
+		std::cout << "Configuration JSON file found at : " << pathToConfigurationFile << std::endl;
+		return true;
 
-            return std::any_cast<ValueType>(iterator->second);
-
-        } catch(const std::bad_any_cast& e) {
-
-            LogManager::Log(LogManager::LogLevel::Error, std::format("Type mismatch for \"{}\" key : \"{}\"", sectionKey, e.what()), true);
-            throw;
-
-        };
-
-    };
-
-    const char* rawValue = configuration.GetValue(section, key, nullptr);
-
-    if(!rawValue) {
-
-        LogManager::Log(LogManager::LogLevel::Warn, std::format("\"{}\" key not found in \"{}\" section", key, section), false);
-        LogManager::Log(LogManager::LogLevel::Warn, std::format("Message : \"{}\"", "Returning default value"), true);
-        return defaultValue;
-
-    };
-
-    ValueType convertedValue;
-
-    try {
-
-        if constexpr(std::is_same_v<ValueType, int>) {
-
-            convertedValue = std::stoi(rawValue);
-
-        } else if constexpr(std::is_same_v<ValueType, bool>) {
-
-            convertedValue = (std::string(rawValue) == "true");
-
-        } else if constexpr(std::is_same_v<ValueType, float>) {
-
-            convertedValue = std::stof(rawValue);
-
-        } else {
-
-            convertedValue = rawValue;
-
-        };
-
-    } catch(...) {
-
-        LogManager::Log(LogManager::LogLevel::Error, std::format("Failed to convert value \"{}\" for \"{}\" key", rawValue, sectionKey), false);
-        LogManager::Log(LogManager::LogLevel::Error, std::format("Message : \"{}\"", "Returning default value"), true);
-        return defaultValue;
-
-    };
-
-    cachedValues[sectionKey] = convertedValue;
-    return convertedValue;
+	};
 
 };
 
@@ -93,28 +55,52 @@ ValueType ConfigurationManager::GetValue(const char* section, const char* key, V
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 bool ConfigurationManager::Init() {
 
-    configuration.SetUnicode();
+	std::string pathToJSONFiles = YGGDRASIL::GetGlobal<const char*>(YGGDRASIL::Global::PathToJSONFiles, "PathToJSONFiles");
+	std::string pluginName = YGGDRASIL::GetGlobal<const char*>(YGGDRASIL::Global::PluginName, "PluginName");
 
-    std::string pathToSKSEPlugins = YGGDRASIL::GetGlobal<const char*>(YGGDRASIL::Global::PathToSKSEPlugins);
-    std::string pluginName = YGGDRASIL::GetGlobal<const char*>(YGGDRASIL::Global::PluginName);
+	std::string pathToConfigurationFile = std::format("{}\\{}.json", pathToJSONFiles, pluginName);
 
-    std::string pathToConfigurationFile = std::format("{}\\{}.ini", pathToSKSEPlugins, pluginName);
+	if(!FindConfigurationFile(pathToConfigurationFile)) {
 
-    SI_Error configurationLoadState = configuration.LoadFile(pathToConfigurationFile.c_str());
+		if(CreateConfigurationFile(pathToConfigurationFile)) {
 
-    if(configurationLoadState < 0) return CreateConfigurationFile(pathToConfigurationFile);
+			return LoadConfigurationFile(pathToConfigurationFile);
 
-    YGGDRASIL::SetGlobal(YGGDRASIL::Global::PathToConfigurationFile, pathToConfigurationFile);
-    return true;
+		};
+
+		return false;
+
+	} else {
+
+		return LoadConfigurationFile(pathToConfigurationFile);
+
+	};
 
 };
 
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
-// RESETS CONFIGURATION FILE
+// LOADS CONFIGURATION FILE
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
-bool ConfigurationManager::ResetConfigurationFile() {
+bool ConfigurationManager::LoadConfigurationFile(std::string pathToConfigurationFile) {
 
-    configuration.SetValue("DEBUG", "SetLogLevel", "Trace");
-    return true;
+	std::ifstream configurationFile(pathToConfigurationFile);
+
+	if(configurationFile.is_open()) {
+
+		json configuration;
+		configurationFile >> configuration;
+		configurationFile.close();
+
+		std::cout << "Loaded configuration JSON file at : " << pathToConfigurationFile << std::endl;
+
+		YGGDRASIL::SetGlobal(YGGDRASIL::Global::Configuration, configuration);
+		return true;
+
+	} else {
+
+		std::cout << "Failed to load configuration JSON file at : " << pathToConfigurationFile << std::endl;
+		return false;
+
+	};
 
 };
