@@ -39,6 +39,8 @@ TranslationsManager::Languages TranslationsManager::GetCurrentGameLanguage() {
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 bool TranslationsManager::Init() {
 
+	bool supportedLocale;
+
 	std::string locale;
 
 	TranslationsManager::Languages currentLocale = GetCurrentGameLanguage();
@@ -48,77 +50,80 @@ bool TranslationsManager::Init() {
 		case TranslationsManager::Languages::Chinese : {
 
 			locale = "Chinese";
-			YGGDRASIL::SetGlobal(YGGDRASIL::Global::CurrentLocale, locale);
-			LogManager::Log(LogManager::LogLevel::Information, std::format("Detected language : \"{}\"", locale), false);
-			return true;
+			supportedLocale = true;
 
 		};
 
 		case TranslationsManager::Languages::English : {
 
 			locale = "English";
-			YGGDRASIL::SetGlobal(YGGDRASIL::Global::CurrentLocale, locale);
-			LogManager::Log(LogManager::LogLevel::Information, std::format("Detected language : \"{}\"", locale), false);
-			return true;
+			supportedLocale = true;
 
 		};
 
 		case TranslationsManager::Languages::French : {
 
 			locale = "French";
-			YGGDRASIL::SetGlobal(YGGDRASIL::Global::CurrentLocale, locale);
-			LogManager::Log(LogManager::LogLevel::Information, std::format("Detected language : \"{}\"", locale), false);
-			return true;
+			supportedLocale = true;
 
 		};
 
 		case TranslationsManager::Languages::German : {
 
 			locale = "German";
-			YGGDRASIL::SetGlobal(YGGDRASIL::Global::CurrentLocale, locale);
-			LogManager::Log(LogManager::LogLevel::Information, std::format("Detected language : \"{}\"", locale), false);
-			return true;
+			supportedLocale = true;
 
 		};
 
 		case TranslationsManager::Languages::Italian : {
 
 			locale = "Italian";
-			YGGDRASIL::SetGlobal(YGGDRASIL::Global::CurrentLocale, locale);
-			LogManager::Log(LogManager::LogLevel::Information, std::format("Detected language : \"{}\"", locale), false);
-			return true;
+			supportedLocale = true;
 
 		};
 
 		case TranslationsManager::Languages::Japanese : {
 
 			locale = "Japanese";
-			YGGDRASIL::SetGlobal(YGGDRASIL::Global::CurrentLocale, locale);
-			LogManager::Log(LogManager::LogLevel::Information, std::format("Detected language : \"{}\"", locale), false);
-			return true;
+			supportedLocale = true;
 
 		};
 
 		case TranslationsManager::Languages::Polish : {
 
 			locale = "Polish";
-			YGGDRASIL::SetGlobal(YGGDRASIL::Global::CurrentLocale, locale);
-			LogManager::Log(LogManager::LogLevel::Information, std::format("Detected language : \"{}\"", locale), false);
-			return true;
+			supportedLocale = true;
 
 		};
 
 		case TranslationsManager::Languages::Russian : {
 
 			locale = "Russian";
-			YGGDRASIL::SetGlobal(YGGDRASIL::Global::CurrentLocale, locale);
-			LogManager::Log(LogManager::LogLevel::Information, std::format("Detected language : \"{}\"", locale), false);
-			return true;
+			supportedLocale = true;
+
+		};
+
+		default : {
+
+			supportedLocale = false;
 
 		};
 
 	};
 
-	return false;
+	if(supportedLocale) {
+
+		YGGDRASIL::SetGlobal(YGGDRASIL::Global::CurrentLocale, locale);
+		LogManager::Log(LogManager::LogLevel::Information, std::format("Detected language : \"{}\"", locale), false);
+		LogManager::Log(LogManager::LogLevel::Information, std::format("\"{}\" language is supported by Yggdrasil UI", locale), true);
+
+	} else {
+
+		LogManager::Log(LogManager::LogLevel::Warning, "Detected an unsupported language", false);
+		LogManager::Log(LogManager::LogLevel::Warning, "Check your Skyrim.ini files and set a supported \"sLanguage\" value under \"[General]\" section", true);
+
+	};
+
+	return supportedLocale;
 
 };

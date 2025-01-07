@@ -93,7 +93,7 @@ namespace YGGDRASIL {
 
 		std::vector<std::string> menus = GetGlobal<std::vector<std::string>>(Global::Menus, "Menus");
 
-		LogManager::Log(LogManager::LogLevel::Debug, std::format("Is \"{}\" handled : {}", menuName, std::find(menus.begin(), menus.end(), menuName) != menus.end()), true);
+		LogManager::Log(LogManager::LogLevel::Trace, std::format("Is \"{}\" UI handled : {}", menuName, std::find(menus.begin(), menus.end(), menuName) != menus.end()), true);
 		return std::find(menus.begin(), menus.end(), menuName) != menus.end();
 
 	};

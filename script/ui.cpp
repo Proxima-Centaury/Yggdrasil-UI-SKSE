@@ -48,7 +48,7 @@ RE::BSEventNotifyControl UIManager::ProcessEvent(RE::InputEvent* const* event, R
 
 					case RE::INPUT_DEVICE::kKeyboard : {
 
-						std::cout << std::format("\"Keyboard\" input detected : {}", key) << "\n";
+						std::cout << std::format("\"Keyboard\" input detected : {}", key) << std::endl;
 						YGGDRASIL::SetGlobal(YGGDRASIL::Global::CurrentPlatform, YGGDRASIL::Platform::PC);
 						break;
 
@@ -56,7 +56,7 @@ RE::BSEventNotifyControl UIManager::ProcessEvent(RE::InputEvent* const* event, R
 
 					case RE::INPUT_DEVICE::kMouse : {
 
-						std::cout << std::format("\"Mouse\" input detected : {}", key) << "\n";
+						std::cout << std::format("\"Mouse\" input detected : {}", key) << std::endl;
 						YGGDRASIL::SetGlobal(YGGDRASIL::Global::CurrentPlatform, YGGDRASIL::Platform::PC);
 						break;
 
@@ -64,16 +64,16 @@ RE::BSEventNotifyControl UIManager::ProcessEvent(RE::InputEvent* const* event, R
 
 					case RE::INPUT_DEVICE::kGamepad : {
 
-						std::cout << std::format("\"Gamepad\" input detected : {}", key) << "\n";
+						std::cout << std::format("\"Gamepad\" input detected : {}", key) << std::endl;
 
 						if(IsXboxController()) {
 
-							std::cout << std::format("\"Gamepad\" type is : \"{}\"", "Xbox controller") << "\n";
+							std::cout << std::format("\"Gamepad\" type is : \"{}\"", "Xbox controller") << std::endl;
 							YGGDRASIL::SetGlobal(YGGDRASIL::Global::CurrentPlatform, YGGDRASIL::Platform::Xbox);
 
 						} else {
 
-							std::cout << std::format("\"Gamepad\" type is : \"{}\"", "PlayStation controller") << "\n";
+							std::cout << std::format("\"Gamepad\" type is : \"{}\"", "PlayStation controller") << std::endl;
 							YGGDRASIL::SetGlobal(YGGDRASIL::Global::CurrentPlatform, YGGDRASIL::Platform::PlayStation);
 
 						};
