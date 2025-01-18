@@ -22,10 +22,12 @@
 
 #include <Xinput.h>
 
-#include "dependencies/SimpleINI/SimpleIni.h" // Dependency : manual integration
-
 #include "RE/Skyrim.h" // Dependency : vcpkg integration
 #include "SKSE/SKSE.h" // Dependency : vcpkg integration
+
+#include "dependencies/SimpleINI/SimpleIni.h" // Dependency : manual integration
+
+#include <nlohmann/json.hpp> // Dependency : vcpkg integration
 
 #include <AL/al.h> // Dependency : vcpkg integration
 #include <AL/alc.h> // Dependency : vcpkg integration
@@ -43,6 +45,7 @@
 
 #include <spdlog/sinks/basic_file_sink.h>
 
+using json = nlohmann::json;
 using namespace std::literals;
 
 namespace fs = std::filesystem;

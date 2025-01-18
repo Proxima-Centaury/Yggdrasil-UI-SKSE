@@ -4,6 +4,7 @@ namespace YGGDRASIL {
 
 	struct MenuItem {
 
+		bool confirmation;
 		bool disabled;
 		bool selected;
 
@@ -12,34 +13,37 @@ namespace YGGDRASIL {
 
 		std::optional<std::string> path;
 
-		MenuItem(bool isDisabled, const std::string& itemLabel, std::optional<std::string> itemPath, bool isSelected, const std::string& itemText)
-		: disabled(isDisabled), label(itemLabel), path(itemPath), selected(isSelected), text(itemText) {};
+		MenuItem(bool hasConfirmation, bool isDisabled, const std::string& itemLabel, std::optional<std::string> itemPath, bool isSelected, const std::string& itemText)
+		: confirmation(hasConfirmation), disabled(isDisabled), label(itemLabel), path(itemPath), selected(isSelected), text(itemText) {};
 
 	};
 
 	enum class Global {
 
+		BasePath,
+		Configuration,
 		CurrentGamePlatform,
-		CurrentLocale,
+		CurrentLanguage,
 		CurrentPlatform,
-		GAMEVersion,
 		Menus,
 		MenuState,
 		PathToBackgrounds,
 		PathToConfigurationFile,
+		PathToIcons,
 		PathToLogFile,
 		PathToMyGames,
 		PathToMyDocuments,
+		PathToSFX,
 		PathToSKSE,
 		PathToSKSEPlugins,
-		PathToSkyrimInterface,
-		PathToUISoundFX,
-		PathToUITranslationsFiles,
+		PathToStyles,
+		PathToTranslations,
 		PluginName,
 		Settings,
 		SKSEVersion,
 		SkyrimGOG,
 		SkyrimSteam,
+		TESVVersion,
 		YGUIVersion
 
 	};
@@ -78,20 +82,20 @@ namespace YGGDRASIL {
 	inline bool initialGlobalsLoaded;
 	inline bool inputLoaded;
 
-	template <typename UnknownType>
-	UnknownType GetGlobal(Global variable) {
+	template <typename Type>
+	Type GetGlobal(Global variable, std::string name) {
 
 		try {
 
-			return std::any_cast<UnknownType>(globalVariables.at(variable));
+			return std::any_cast<Type>(globalVariables.at(variable));
 
 		} catch(const std::bad_any_cast& error) {
 
-			SKSE::stl::report_and_fail(std::string("Invalid type for global variable : ") + error.what());
+			SKSE::stl::report_and_fail(std::format("Invalid type for global variable : {} ( {} )", name, error.what()));
 
 		} catch(const std::out_of_range&) {
 
-			SKSE::stl::report_and_fail("Global variable not found.");
+			SKSE::stl::report_and_fail(std::format("Global variable {} not found", name));
 
 		};
 
@@ -101,15 +105,19 @@ namespace YGGDRASIL {
 	bool Initialize(Manager manager);
 	bool IsMenuHandled(std::string menuName);
 
+	void CloseMenu(const std::string& menuName);
 	void OnSKSEMessage(SKSE::MessagingInterface::Message* message);
-	template <typename UnknownType>
-	void SetGlobal(Global variable, UnknownType value) { globalVariables[variable] = value; };
+	void OpenMenu(const std::string& menuName);
 	void ToggleDebuggingConsole(bool flag);
 	void TrimLeadingSpaces(std::string& text);
 	void TrimTrailingSpaces(std::string& text);
 
-	std::string UTF16ToUTF8(const std::wstring& utf16String);
+	template <typename Type>
+	void SetGlobal(Global variable, Type value) { globalVariables[variable] = value; };
 
+	std::string FormatPathForSWF(const std:: string& path);
+
+	std::string UTF16ToUTF8(const std::wstring& utf16String);
 	std::wstring UTF8ToUTF16(const std::string& utf8String);
 
 	RE::GFxValue MenuItemToGFxValue(const MenuItem& item, RE::GFxMovieView* view);
