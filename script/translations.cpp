@@ -41,7 +41,7 @@ bool TranslationsManager::Init() {
 
 	bool supportedLocale;
 
-	std::string locale;
+	std::string language;
 
 	TranslationsManager::Languages currentLocale = GetCurrentGameLanguage();
 
@@ -49,7 +49,7 @@ bool TranslationsManager::Init() {
 
 		case TranslationsManager::Languages::Chinese : {
 
-			locale = "Chinese";
+			language = "Chinese";
 			supportedLocale = true;
 			break;
 
@@ -57,7 +57,7 @@ bool TranslationsManager::Init() {
 
 		case TranslationsManager::Languages::English : {
 
-			locale = "English";
+			language = "English";
 			supportedLocale = true;
 			break;
 
@@ -65,7 +65,7 @@ bool TranslationsManager::Init() {
 
 		case TranslationsManager::Languages::French : {
 
-			locale = "French";
+			language = "French";
 			supportedLocale = true;
 			break;
 
@@ -73,7 +73,7 @@ bool TranslationsManager::Init() {
 
 		case TranslationsManager::Languages::German : {
 
-			locale = "German";
+			language = "German";
 			supportedLocale = true;
 			break;
 
@@ -81,7 +81,7 @@ bool TranslationsManager::Init() {
 
 		case TranslationsManager::Languages::Italian : {
 
-			locale = "Italian";
+			language = "Italian";
 			supportedLocale = true;
 			break;
 
@@ -89,7 +89,7 @@ bool TranslationsManager::Init() {
 
 		case TranslationsManager::Languages::Japanese : {
 
-			locale = "Japanese";
+			language = "Japanese";
 			supportedLocale = true;
 			break;
 
@@ -97,7 +97,7 @@ bool TranslationsManager::Init() {
 
 		case TranslationsManager::Languages::Polish : {
 
-			locale = "Polish";
+			language = "Polish";
 			supportedLocale = true;
 			break;
 
@@ -105,7 +105,7 @@ bool TranslationsManager::Init() {
 
 		case TranslationsManager::Languages::Russian : {
 
-			locale = "Russian";
+			language = "Russian";
 			supportedLocale = true;
 			break;
 
@@ -122,9 +122,9 @@ bool TranslationsManager::Init() {
 
 	if(supportedLocale) {
 
-		YGGDRASIL::SetGlobal(YGGDRASIL::Global::CurrentLocale, locale);
-		LogManager::Log(LogManager::LogLevel::Information, std::format("Detected language : \"{}\"", locale), false);
-		LogManager::Log(LogManager::LogLevel::Information, std::format("\"{}\" language is supported by Yggdrasil UI", locale), true);
+		YGGDRASIL::SetGlobal(YGGDRASIL::Global::CurrentLanguage, language);
+		LogManager::Log(LogManager::LogLevel::Information, std::format("Detected language : \"{}\"", language), false);
+		LogManager::Log(LogManager::LogLevel::Information, std::format("\"{}\" language is supported by Yggdrasil UI", language), true);
 
 	} else {
 

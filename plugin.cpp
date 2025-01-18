@@ -31,7 +31,7 @@ extern "C" DLLEXPORT bool SKSEPlugin_Load(const SKSE::LoadInterface* skse) {
 
 		LogManager::SetLogLevel();
 
-		std::string pathToConfigurationFile = YGGDRASIL::GetGlobal<const char*>(YGGDRASIL::Global::PathToConfigurationFile, "PathToConfigurationFile");
+		std::string pathToConfigurationFile = YGGDRASIL::GetGlobal<const char*>(YGGDRASIL::Global::BasePath, "BasePath");
 		std::string pathToLogFile = YGGDRASIL::GetGlobal<std::string>(YGGDRASIL::Global::PathToLogFile, "PathToLogFile");
 		std::string pluginName = YGGDRASIL::GetGlobal<const char*>(YGGDRASIL::Global::PluginName, "PluginName");
 

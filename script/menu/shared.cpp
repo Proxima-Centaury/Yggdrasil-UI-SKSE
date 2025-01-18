@@ -237,12 +237,13 @@ void SharedMenuManager::UIPlaySound(const RE::FxDelegateArgs& args) {
 
 	SKSELog(args);
 
-	std::string pathToUISoundFX = YGGDRASIL::GetGlobal<const char*>(YGGDRASIL::Global::PathToUISoundFX, "PathToUISoundFX");
-	std::string pathToUISoundFXFile = std::format("{}\\{}.wav", pathToUISoundFX, args[0].GetString());
+	std::string basePath = YGGDRASIL::GetGlobal<const char*>(YGGDRASIL::Global::BasePath, "BasePath");
+	std::string pathToSFX = YGGDRASIL::GetGlobal<const char*>(YGGDRASIL::Global::PathToSFX, "PathToSFX");
+	std::string pathToSFXFile = std::format("{}{}\\{}.wav", basePath, pathToSFX, args[0].GetString());
 
-	SFXManager::GetSingleton().QueueSFX(pathToUISoundFXFile);
+	SFXManager::GetSingleton().QueueSFX(pathToSFXFile);
 
-	LogManager::Log(LogManager::LogLevel::Information, std::format("Played SFX : \"{}\"", pathToUISoundFXFile), true);
+	LogManager::Log(LogManager::LogLevel::Information, std::format("Played SFX : \"{}\"", pathToSFXFile), true);
 
 };
 

@@ -25,6 +25,7 @@ class UIManager : public RE::BSTEventSink<RE::MenuOpenCloseEvent>, public RE::BS
 
 		RE::FxDelegate* GameDelegate { nullptr };
 
+		bool CreateUIActionScriptObject(RE::GFxMovieView *movieClip, std::string menuName);
 		bool IsXboxController();
 		bool RegisterFxDelegateCallbacks(std::string menuName);
 		bool UnregisterFxDelegateCallbacks(std::string menuName);

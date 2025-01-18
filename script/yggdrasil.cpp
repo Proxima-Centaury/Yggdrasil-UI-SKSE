@@ -38,17 +38,35 @@ namespace YGGDRASIL {
 	};
 
 	// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
+	// FORMATS PATH FOR SWF FILES
+	// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
+	std::string FormatPathForSWF(const std::string& path) {
+
+		std::string formatted = path;
+
+		while(!formatted.empty() && formatted[0] == '\\') { formatted.erase(0, 1); };
+
+		std::replace(formatted.begin(), formatted.end(), '\\', '/');
+
+		if(!formatted.empty() && formatted.back() != '/') formatted += '/';
+
+		return formatted;
+
+	};
+
+	// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 	// TRIGGERS MANAGERS INITIALIZATION
 	// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 	bool Initialize(Manager manager) {
 
 		if(!initialGlobalsLoaded) {
 
-			SetGlobal(Global::PathToBackgrounds, "Data\\Interface\\Yggdrasil UI\\Backgrounds");
-			SetGlobal(Global::PathToConfigurationFile, "Data\\Interface\\JSON");
-			SetGlobal(Global::PathToSkyrimInterface, "Data\\Interface");
-			SetGlobal(Global::PathToUISoundFX, "Data\\Interface\\Yggdrasil UI\\SFX");
-			SetGlobal(Global::PathToUITranslationsFiles, "Data\\Interface\\Yggdrasil UI\\Translations");
+			SetGlobal(Global::BasePath, "Data\\Interface");
+			SetGlobal(Global::PathToBackgrounds, "\\Yggdrasil UI\\Backgrounds");
+			SetGlobal(Global::PathToIcons, "\\Yggdrasil UI\\Icons");
+			SetGlobal(Global::PathToSFX, "\\Yggdrasil UI\\SFX");
+			SetGlobal(Global::PathToStyles, "\\Yggdrasil UI\\Styles");
+			SetGlobal(Global::PathToTranslations, "\\Yggdrasil UI\\Translations");
 			SetGlobal(Global::PluginName, "Yggdrasil UI");
 			SetGlobal(Global::SkyrimGOG, "Skyrim Special Edition GOG");
 			SetGlobal(Global::SkyrimSteam, "Skyrim Special Edition");

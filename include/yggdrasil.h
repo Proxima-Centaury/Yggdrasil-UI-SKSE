@@ -20,23 +20,24 @@ namespace YGGDRASIL {
 
 	enum class Global {
 
+		BasePath,
 		Configuration,
 		CurrentGamePlatform,
-		CurrentLocale,
+		CurrentLanguage,
 		CurrentPlatform,
-		Customization,
 		Menus,
 		MenuState,
 		PathToBackgrounds,
 		PathToConfigurationFile,
+		PathToIcons,
 		PathToLogFile,
 		PathToMyGames,
 		PathToMyDocuments,
+		PathToSFX,
 		PathToSKSE,
 		PathToSKSEPlugins,
-		PathToSkyrimInterface,
-		PathToUISoundFX,
-		PathToUITranslationsFiles,
+		PathToStyles,
+		PathToTranslations,
 		PluginName,
 		Settings,
 		SKSEVersion,
@@ -114,8 +115,9 @@ namespace YGGDRASIL {
 	template <typename Type>
 	void SetGlobal(Global variable, Type value) { globalVariables[variable] = value; };
 
-	std::string UTF16ToUTF8(const std::wstring& utf16String);
+	std::string FormatPathForSWF(const std:: string& path);
 
+	std::string UTF16ToUTF8(const std::wstring& utf16String);
 	std::wstring UTF8ToUTF16(const std::string& utf8String);
 
 	RE::GFxValue MenuItemToGFxValue(const MenuItem& item, RE::GFxMovieView* view);

@@ -55,7 +55,7 @@ bool ConfigurationManager::FindConfigurationFile(std::string pathToConfiguration
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 bool ConfigurationManager::Init() {
 
-	std::string pathToConfigurationFile = YGGDRASIL::GetGlobal<const char*>(YGGDRASIL::Global::PathToConfigurationFile, "PathToConfigurationFile");
+	std::string pathToConfigurationFile = YGGDRASIL::GetGlobal<const char*>(YGGDRASIL::Global::BasePath, "BasePath");
 	std::string pluginName = YGGDRASIL::GetGlobal<const char*>(YGGDRASIL::Global::PluginName, "PluginName");
 
 	std::string filePath = std::format("{}\\{}.json", pathToConfigurationFile, pluginName);
